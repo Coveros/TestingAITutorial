@@ -267,6 +267,28 @@ class RAGPipeline:
             logger.error(f"Failed to generate query embedding: {str(e)}")
             raise
     
+    def _create_smart_preview(self, text: str, max_length: int = 300) -> str:
+        """Create a smart preview of text that avoids cutting off mid-word/sentence."""
+        if len(text) <= max_length:
+            return text
+        
+        # Try to find a good breaking point (sentence ending)
+        truncated = text[:max_length]
+        
+        # Look for sentence endings within a reasonable range
+        for ending in ['. ', '.\n', '! ', '!\n', '? ', '?\n']:
+            last_sentence = truncated.rfind(ending)
+            if last_sentence > max_length * 0.7:  # At least 70% of max length
+                return text[:last_sentence + 1] + "..."
+        
+        # Fall back to word boundary
+        last_space = truncated.rfind(' ')
+        if last_space > max_length * 0.8:  # At least 80% of max length
+            return text[:last_space] + "..."
+        
+        # Final fallback: hard truncation with ellipsis
+        return text[:max_length - 3] + "..."
+    
     def _retrieve_documents(self, query: str, n_results: int = None) -> Dict[str, Any]:
         """Retrieve relevant documents for a query."""
         start_time = time.time()
@@ -359,7 +381,7 @@ Based on the provided context, please answer the user's question. Use only the i
                 'response': response_text,
                 'sources': [
                     {
-                        'content': doc[:200] + "..." if len(doc) > 200 else doc,
+                        'content': self._create_smart_preview(doc),
                         'metadata': meta,
                         'similarity': round(max(0, (1 - dist) * 100), 1)  # Convert cosine distance to similarity percentage
                     }
