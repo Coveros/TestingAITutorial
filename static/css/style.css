@@ -331,6 +331,19 @@ body {
     font-size: 0.8rem;
 }
 
+.source-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.source-title {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.75rem;
+}
+
 .source-content {
     color: #4b5563;
     line-height: 1.4;
@@ -339,7 +352,7 @@ body {
 .source-similarity {
     color: #6b7280;
     font-size: 0.7rem;
-    margin-top: 4px;
+    font-weight: 400;
 }
 
 /* Input Container */

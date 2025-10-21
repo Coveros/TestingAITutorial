@@ -210,8 +210,11 @@ class ChatApp {
         if (metadata.sources && metadata.sources.length > 0) {
             const sourceItems = metadata.sources.map(source => `
                 <div class="source-item">
+                    <div class="source-header">
+                        <div class="source-title">📄 ${source.metadata && source.metadata.source ? source.metadata.source : 'Unknown Document'}</div>
+                        <div class="source-similarity">Similarity: ${source.similarity}%</div>
+                    </div>
                     <div class="source-content">${this.escapeHtml(source.content)}</div>
-                    <div class="source-similarity">Similarity: ${source.similarity}%</div>
                 </div>
             `).join('');
             
