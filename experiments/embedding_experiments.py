@@ -24,7 +24,7 @@ import chromadb
 class EmbeddingExperimentPipeline(RAGPipeline):
     """Modified RAG pipeline for embedding experiments."""
     
-    def __init__(self, embedding_model="embed-english-v2.0"):
+    def __init__(self, embedding_model="embed-english-v3.0"):
         self.embedding_model = embedding_model
         # Create unique collection for this model to avoid dimension conflicts
         self.collection_name = f"embedding_test_{embedding_model.replace('-', '_').replace('.', '_')}"
@@ -190,11 +190,11 @@ def run_embedding_experiments():
     
     # Different embedding models to test
     embedding_models = [
-        # Current (problematic) model
-        ("embed-english-v2.0", "Current Model (Older, Lower Quality)"),
+        # Current model
+        ("embed-english-v3.0", "Current Model (Latest Generation)"),
         
-        # Newer models students can try
-        ("embed-english-v3.0", "Newer Model (Better Quality)"),
+        # Previous models students can compare
+        ("embed-english-v2.0", "Previous Model (Higher Dimensions, 4096)"),
         ("embed-english-light-v3.0", "Light Model (Faster, Potentially Lower Quality)"),
         
         # Multilingual models (may have different dimensions)
@@ -257,7 +257,7 @@ def run_embedding_experiments():
         
         print(f"\n🔧 TO IMPLEMENT THE BEST MODEL:")
         print(f"   1. In app/rag_pipeline.py, find the _generate_embeddings method")
-        print(f"   2. Change model=\"embed-english-v2.0\" to model=\"{best_model['model']}\"")
+        print(f"   2. Change model=\"embed-english-v3.0\" to model=\"{best_model['model']}\"")
         print(f"   3. Also update _generate_query_embedding method")
         print(f"   4. Restart the application and test!")
 
@@ -269,7 +269,7 @@ def run_detailed_analysis():
     
     # Test with current model for baseline
     print("Testing current model for detailed analysis...")
-    result = test_embedding_model("embed-english-v2.0", "Current Model (Detailed Analysis)")
+    result = test_embedding_model("embed-english-v3.0", "Current Model (Detailed Analysis)")
     
     if result:
         print("\n📊 PER-QUERY ANALYSIS:")

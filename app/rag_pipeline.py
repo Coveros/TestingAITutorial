@@ -73,15 +73,23 @@ class RAGPipeline:
             )
             
             # Get or create collection with cosine similarity
-            collection_name = "genai_testing_docs"
+            collection_name = "genai_testing_docs_v3"  # New collection name for v3 embeddings
             try:
                 # Try to get existing collection
                 self.collection = self.vector_db.get_collection(collection_name)
                 
                 # Test if the collection works with current embedding model
                 try:
+                    # Test with actual embedding to catch dimension mismatches
+                    test_embedding = self.cohere_client.embed(
+                        texts=["test compatibility"],
+                        model="embed-english-v3.0",
+                        input_type="search_query"
+                    ).embeddings[0]
+                    
+                    # Try a query with the embedding
                     test_query = self.collection.query(
-                        query_texts=["test"],
+                        query_embeddings=[test_embedding],
                         n_results=1
                     )
                     logger.info(f"Loaded existing collection: {collection_name}")
@@ -231,10 +239,10 @@ class RAGPipeline:
     def _generate_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Generate embeddings for texts using Cohere."""
         try:
-            # INTENTIONAL ISSUE: Using older embedding model for some quality issues
+            # Using embed-english-v3.0 for consistent 1024-dimensional embeddings
             response = self.cohere_client.embed(
                 texts=texts,
-                model="embed-english-v2.0",  # Older model instead of latest
+                model="embed-english-v3.0",  # Latest model with 1024 dimensions
                 input_type="search_document"
             )
             
@@ -249,7 +257,7 @@ class RAGPipeline:
         try:
             response = self.cohere_client.embed(
                 texts=[query],
-                model="embed-english-v2.0",
+                model="embed-english-v3.0",  # Same model as document embeddings
                 input_type="search_query"
             )
             
@@ -413,7 +421,8 @@ Based on the provided context, please answer the question about testing generati
             if self.cohere_client:
                 test_response = self.cohere_client.embed(
                     texts=["test"], 
-                    model="embed-english-v2.0"
+                    model="embed-english-v3.0",  # Same model as main embeddings
+                    input_type="search_query"
                 )
                 health['cohere_client'] = len(test_response.embeddings) > 0
             

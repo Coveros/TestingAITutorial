@@ -75,7 +75,7 @@ class OptimizedRAGPipeline(RAGPipeline):
         try:
             response = self.cohere_client.embed(
                 texts=texts,
-                model=self.config.get('embedding_model', 'embed-english-v2.0'),
+                model=self.config.get('embedding_model', 'embed-english-v3.0'),
                 input_type="search_document"
             )
             return response.embeddings
@@ -88,7 +88,7 @@ class OptimizedRAGPipeline(RAGPipeline):
         try:
             response = self.cohere_client.embed(
                 texts=[query],
-                model=self.config.get('embedding_model', 'embed-english-v2.0'),
+                model=self.config.get('embedding_model', 'embed-english-v3.0'),
                 input_type="search_query"
             )
             return response.embeddings[0]
@@ -330,7 +330,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 2000,
             'chunk_overlap': 200,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 5,
             'similarity_threshold': 0.0,
             'max_tokens': 300,
@@ -341,7 +341,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 500,
             'chunk_overlap': 50,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 5,
             'similarity_threshold': 0.0,
             'max_tokens': 300,
@@ -352,7 +352,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 2000,
             'chunk_overlap': 200,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 5,
             'similarity_threshold': 0.0,
             'max_tokens': 600,
@@ -363,7 +363,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 2000,
             'chunk_overlap': 200,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 7,
             'similarity_threshold': 0.005,
             'max_tokens': 300,
@@ -374,7 +374,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 500,
             'chunk_overlap': 50,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 7,
             'similarity_threshold': 0.005,
             'max_tokens': 600,
@@ -396,7 +396,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 400,
             'chunk_overlap': 40,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 5,
             'similarity_threshold': 0.01,
             'max_tokens': 500,
@@ -407,7 +407,7 @@ def run_optimization_experiments():
         ({
             'chunk_size': 300,
             'chunk_overlap': 30,
-            'embedding_model': 'embed-english-v2.0',
+            'embedding_model': 'embed-english-v3.0',
             'n_results': 10,
             'similarity_threshold': 0.002,
             'max_tokens': 800,
