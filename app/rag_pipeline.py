@@ -317,7 +317,7 @@ class RAGPipeline:
 Context:
 {context}
 
-Based on the provided context, please answer the question about testing generative AI applications. If the context doesn't contain relevant information, say so clearly.""",
+Based on the provided context, please answer the user's question. Use only the information from the context provided. If the context doesn't contain relevant information to answer the question, say so clearly.""",
                 max_tokens=300,  # INTENTIONAL ISSUE: Sometimes too short for complete answers
                 temperature=0.7,  # INTENTIONAL ISSUE: Slightly high temperature causes inconsistency
             )
