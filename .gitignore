@@ -36,14 +36,24 @@ performance_metrics/
 *.sqlite3
 *.db
 chroma.sqlite3
+data/chroma_db/
 embedding_experiment_db/
 generation_experiment_db/
 retrieval_experiment_db/
+system_optimization_db/
 test_chroma_db_*/
 *.chroma/
 vector_db/
 database/
 db_backups/
+chroma_db/
+
+# ChromaDB specific files and directories
+**/chroma.sqlite3
+**/*chroma_db*/
+*.bin
+*.index
+*.hnsw
 
 # 🐍 PYTHON SPECIFIC
 # Standard Python gitignore patterns
