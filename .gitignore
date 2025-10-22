@@ -176,8 +176,12 @@ data/interim/
 debug_*.py
 temp_*.py
 scratch_*.py
+# Temporary test files (but not in tests/ directory)
 test_*.py
+!tests/test_*.py
+# Temporary demo files (but not legitimate demos in project directories)
 demo_*.py
+!regression_testing/demo_*.py
 
 # 📋 DOCUMENTATION BUILDS
 # Generated documentation

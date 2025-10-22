@@ -563,7 +563,7 @@ def run_comprehensive_evaluation():
         rag_pipeline = RAGPipeline()
         evaluator = EvaluationFramework(rag_pipeline)
         
-        # Test data
+        # STUDENT: Test data
         quality_test_data = [
             {
                 "query": "What are the main challenges in testing GenAI applications?",

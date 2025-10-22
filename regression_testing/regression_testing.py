@@ -69,7 +69,7 @@ class RegressionTestFramework:
     def _load_test_cases(self) -> List[Dict[str, Any]]:
         """Load test cases with gold standard answers."""
         
-        # Define comprehensive test cases with gold standard answers
+        # STUDENT: Define comprehensive test cases with gold standard answers
         test_cases = [
             {
                 'id': 'hallucination_basic',

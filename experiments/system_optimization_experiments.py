@@ -324,7 +324,7 @@ def run_optimization_experiments():
     print("Students: Compare baseline vs optimized configurations!")
     print()
     
-    # Different system configurations to test
+    # STUDENTS: Different system configurations to test
     configurations = [
         # Baseline (current problematic settings)
         ({

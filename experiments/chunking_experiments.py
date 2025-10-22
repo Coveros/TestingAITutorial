@@ -95,6 +95,7 @@ def run_chunking_experiments():
     print("🧪 RAG Chunking Strategy Experiments")
     print("Students: Try different configurations to improve similarity scores!")
     
+    # STUDENT: Add or modify additional strategies below
     strategies = [
         # Current (problematic) configuration
         (2000, 200, "Current Strategy (Large Chunks - Poor Performance)"),

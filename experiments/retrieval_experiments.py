@@ -241,7 +241,7 @@ def run_retrieval_experiments():
     print("   Total experiment time: ~10-15 minutes due to API rate limits")
     print()
     
-    # Different retrieval strategies to test
+    # STUDENTS: Different retrieval strategies to test
     retrieval_strategies = [
         # Current default
         (5, 0.0, "Current Strategy (Top 5, No Filtering)"),

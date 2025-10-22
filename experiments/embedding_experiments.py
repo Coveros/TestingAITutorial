@@ -188,7 +188,7 @@ def run_embedding_experiments():
     print("This teaches real-world challenges in ML model selection!")
     print()
     
-    # Different embedding models to test
+    # STUDENT: Different embedding models to test
     embedding_models = [
         # Current model
         ("embed-english-v3.0", "Current Model (Latest Generation)"),

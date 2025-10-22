@@ -242,7 +242,7 @@ def run_generation_experiments():
     print("   Total experiment time: ~15-20 minutes due to API rate limits")
     print()
     
-    # Different parameter combinations to test
+    # STUDENTS: Different parameter combinations to test
     parameter_sets = [
         # Current (problematic) parameters
         (300, 0.7, "Current Settings (Short Responses, High Variability)"),
