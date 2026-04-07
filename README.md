@@ -2,7 +2,18 @@
 
 ## Overview
 
-This is a complete, production-ready RAG (Retrieval-Augmented Generation) chatbot application specifically designed for teaching GenAI testing concepts. The application is **intentionally built with common issues** that students will discover during testing exercises.
+This repository is the working codebase and course material for a two-part GenAI testing curriculum.
+
+Part 1 (Exercises 1-4) focuses on RAG testing fundamentals.
+Part 2 (Exercises 5-9) focuses on agentic testing for routing, state, reliability, security, and CI gating.
+
+The application is intentionally configured with realistic failure modes so students can practice detection, diagnosis, and mitigation.
+
+## Course Flow
+
+- Student exercises: `docs/Exercise-1.md` to `docs/Exercise-9.md`
+- Instructor notes: `docs/Exercise-1-Instructor-Notes.md` to `docs/Exercise-9-Instructor-Notes.md`
+- Section transition deck text: `docs/Section-Bridge-RAG-to-Agentic.md`
 
 ## Architecture
 
@@ -43,7 +54,7 @@ Frontend (HTML/CSS/JS) → Flask Backend → RAG Pipeline → Cohere API
 
 4. **Configure Environment**
    ```bash
-   copy .env.example .env
+  copy .env.template .env
    # Edit .env and add your Cohere API key
    ```
 
@@ -59,25 +70,19 @@ Frontend (HTML/CSS/JS) → Flask Backend → RAG Pipeline → Cohere API
 
 ## 🚀 Quick Start (Alternative)
 
-For easy access to all testing capabilities, use the wrapper script for the virtual environment:
-
-```bash
-python run_demo_with_venv.py
-```
-
-Or use the quick launcher:
+Use the quick launcher:
 
 ```bash
 python launch.py
 ```
 
 These provide menu-driven interfaces to:
-- Run optimization experiments
 - Execute regression testing
-- Launch interactive demos
-- Run unit tests
+- Run evaluation framework checks
+- Run retrieval tuning support for Exercise 4
 - Start the Flask application
-- Access documentation
+- Run Section 7 and 9 automation suites
+- Access current exercise documentation
 
 ## Project Structure
 
@@ -103,36 +108,23 @@ TestingAITutorial/
 │   │   └── evaluation_metrics.md
 │   └── chroma_db/          # Vector database storage (auto-created)
 ├── tests/
-│   ├── test_rag_pipeline.py         # Core RAG pipeline unit tests
-│   ├── test_regression_framework.py # Regression testing framework tests
 │   └── evaluation_framework.py      # Advanced evaluation tools
-├── experiments/             # Educational optimization experiments
+├── experiments/             # Exercise support experiments
 │   ├── __init__.py          # Package initialization
-│   ├── run_experiments.py   # Master experiment runner with menu interface
-│   ├── chunking_experiments.py     # Document chunking strategy testing
-│   ├── embedding_experiments.py    # Embedding model comparison testing
-│   ├── generation_experiments.py   # Response generation parameter tuning
 │   ├── retrieval_experiments.py    # Document retrieval optimization
-│   ├── system_optimization_experiments.py  # End-to-end system optimization
-│   └── README.md           # Experiments package documentation
-├── regression_testing/      # Production-ready regression testing
+├── regression_testing/      # Regression testing framework for Exercise 3
 │   ├── __init__.py         # Package initialization
-│   ├── regression_testing.py       # Comprehensive regression testing framework
-│   ├── demo_regression_testing.py  # Interactive regression testing demo
-│   ├── config.json         # Configurable testing thresholds and settings
-│   ├── results/            # Auto-generated test results (created at runtime)
-│   └── README.md           # Regression testing package documentation
-├── docs/                   # All project documentation
-│   ├── EXPERIMENTS_README.md       # Detailed experiment documentation
-│   ├── REGRESSION_TESTING_README.md # Regression testing guide
-│   ├── PROJECT_PLAN.md            # Detailed implementation plan
-│   ├── IMPLEMENTATION_CHECKLIST.md # Step-by-step checklist
-│   └── STUDENT_GUIDE.md           # Complete student tutorial
+│   ├── regression_testing.py       # Core framework
+│   └── config.json         # Configurable thresholds and settings
+├── docs/                   # Course materials and instructor notes
+│   ├── Exercise-1.md ... Exercise-9.md
+│   ├── Exercise-1-Instructor-Notes.md ... Exercise-9-Instructor-Notes.md
+│   ├── Section-Bridge-RAG-to-Agentic.md
+├── section7_nfr_quickrun.py # Exercise 7 automation artifact generator
+├── section9_agentic_test_suite.py # Exercise 9 CI-style artifact generator
 ├── requirements.txt         # Python dependencies
-├── .env.example            # Environment variable template  
-├── test_environment.py     # Environment validation script
+├── .env.template           # Environment variable template  
 ├── run.py                  # Application entry point
-├── run_demo_with_venv.py   # Virtual environment wrapper for demos
 ├── launch.py               # Interactive launcher menu
 └── README.md               # This file (main project overview)
 ```
@@ -155,25 +147,11 @@ TestingAITutorial/
 - **Mobile Responsive**: Works on all device sizes
 
 ### 🧪 **Comprehensive Testing Suite**
-- **Import Issues Fixed**: All test files now properly handle Python imports
-- **Virtual Environment Integration**: `run_demo_with_venv.py` script for seamless execution
-- **Unit Tests**: Individual component testing (`tests/test_rag_pipeline.py`)
-- **Integration Tests**: End-to-end API testing  
-- **Regression Testing**: Gold standard answer comparison with pass/fail thresholds (`regression_testing.py`)
-- **Quality Metrics**: Response relevance and accuracy scoring
-- **Performance Tests**: Load testing and concurrent request handling
-- **Robustness Tests**: Edge cases and adversarial inputs
-- **Evaluation Framework**: Automated quality assessment tools (`tests/evaluation_framework.py`)
-- **Optimization Experiments**: 5 systematic testing approaches for parameter tuning:
-  - **Chunking Strategy Testing** (`chunking_experiments.py`)
-  - **Embedding Model Comparison** (`embedding_experiments.py`) 
-  - **Generation Parameter Tuning** (`generation_experiments.py`)
-  - **Retrieval Strategy Optimization** (`retrieval_experiments.py`)
-  - **End-to-End System Optimization** (`system_optimization_experiments.py`)
-- **Interactive Testing Framework**: Menu-driven experiment runner (`run_experiments.py`)
-- **Semantic Similarity Analysis**: Meaning-based response comparison
-- **Quality Gates**: Automated deployment readiness assessment
-- **Evaluation Framework**: Automated quality assessment tools
+- **Exercise 3 evaluation framework**: `tests/evaluation_framework.py`
+- **Exercise 3 regression framework**: `regression_testing/regression_testing.py`
+- **Exercise 4 tuning support**: `experiments/retrieval_experiments.py`
+- **Exercise 7 automation artifacts**: `section7_nfr_quickrun.py`
+- **Exercise 9 CI-style gate artifacts**: `section9_agentic_test_suite.py`
 
 ### 📚 **Rich Knowledge Base**
 - **GenAI Testing Guide**: Comprehensive testing strategies
@@ -182,162 +160,27 @@ TestingAITutorial/
 - **Evaluation Metrics**: Detailed metric explanations
 - **Real-world Examples**: Practical testing scenarios
 
-## 🔬 Testing Approaches Available
+## Course Quick Reference
 
-This tutorial provides multiple testing methodologies to comprehensively evaluate GenAI systems:
+### Exercise Progression
+- Exercises 1-4: RAG testing (goldens, evaluation, diagnostics)
+- Section bridge: `docs/Section-Bridge-RAG-to-Agentic.md`
+- Exercises 5-9: Agentic testing (routing, trajectories, NFR, red teaming, CI gating)
 
-### 🧪 **Experimental Testing** (`run_experiments.py`)
-**Purpose**: Systematic parameter optimization and component analysis  
-**Approach**: Interactive menu-driven experiments  
-**Files**: `*_experiments.py` files for each component  
-**Learn**: How different parameters affect system performance
+### Core Scripts
+- App: `python run.py`
+- Launcher: `python launch.py`
+- Section 7 quick-run: `python section7_nfr_quickrun.py`
+- Section 9 CI suite: `python section9_agentic_test_suite.py`
 
-### 🎯 **Regression Testing** (`regression_testing.py`)
-**Purpose**: Production-ready quality assurance with gold standards  
-**Approach**: Compare responses to expert-curated correct answers  
-**Metrics**: Semantic similarity, keyword matching, quality gates  
-**Learn**: Automated pass/fail criteria and deployment readiness
+### Essential Endpoints
+- `GET /` chat UI
+- `POST /api/chat` message processing
+- `GET /api/health` service health
 
-### ⚡ **Unit Testing** (`tests/test_rag_pipeline.py`)
-**Purpose**: Component-level validation and API testing  
-**Approach**: Traditional pytest-based testing  
-**Coverage**: Pipeline initialization, API endpoints, core functionality  
-**Learn**: Standard software testing practices for AI systems
-
-### 📊 **Evaluation Framework** (`tests/evaluation_framework.py`)
-**Purpose**: Advanced quality assessment and metrics collection  
-**Approach**: Multi-dimensional response evaluation  
-**Features**: Custom scoring, consistency analysis, performance profiling  
-**Learn**: How to measure AI system quality beyond simple accuracy
-
-### 🎮 **Interactive Demos** (`demo_regression_testing.py`)
-**Purpose**: Hands-on learning and concept demonstration  
-**Approach**: Guided tutorials with real-time feedback  
-**Features**: Live testing, framework validation, educational explanations  
-**Learn**: Testing concepts through practical application
-
-## API Endpoints
-
-### `GET /`
-Main chat interface
-
-### `POST /api/chat`
-Process chat messages
-```json
-{
-  "message": "What are the key challenges in testing GenAI?"
-}
-```
-
-**Response:**
-```json
-{
-  "response": "The key challenges in testing GenAI applications include...",
-  "sources": [
-    {
-      "content": "GenAI testing requires...",
-      "metadata": {"source": "genai_testing_guide.md"},
-      "similarity": 0.87
-    }
-  ],
-  "response_time": 1.234,
-  "retrieval_time": 0.456,
-  "generation_time": 0.778,
-  "status": "success"
-}
-```
-
-### `GET /api/health`
-System health check
-```json
-{
-  "status": "healthy",
-  "rag_pipeline": "initialized",
-  "cohere_api_key": "configured"
-}
-```
-
-### `GET /api/stats`
-Performance statistics
-```json
-{
-  "queries_processed": 42,
-  "average_response_time": 1.23,
-  "documents_loaded": 156,
-  "error_rate": 0.02
-}
-```
-
-## Configuration
-
-### Environment Variables (.env)
-```bash
-# Required
-COHERE_API_KEY=your_cohere_api_key_here
-
-# Optional
-FLASK_ENV=development
-FLASK_DEBUG=True
-FLASK_PORT=5000
-CHUNK_SIZE=1000
-CHUNK_OVERLAP=100
-MAX_RETRIEVAL_DOCS=5
-SIMILARITY_THRESHOLD=0.7
-LOG_LEVEL=INFO
-```
-
-### Key Parameters
-
-| Parameter | Description | Default | Impact |
-|-----------|-------------|---------|---------|
-| `CHUNK_SIZE` | Document chunk size for embeddings | 1000 | Affects retrieval granularity |
-| `CHUNK_OVERLAP` | Overlap between chunks | 100 | Prevents information loss |
-| `MAX_RETRIEVAL_DOCS` | Number of documents retrieved | 5 | Balances context vs. performance |
-| `SIMILARITY_THRESHOLD` | Minimum similarity for retrieval | 0.7 | Filters irrelevant documents |
-
-## Intentional Issues for Discovery
-
-This application includes several intentional issues that represent common problems in production GenAI systems:
-
-### 🐛 **Retrieval Issues**
-1. **Suboptimal Chunk Size**: Chunks may be too large for effective retrieval
-2. **Low Similarity Thresholds**: May retrieve irrelevant documents
-3. **Outdated Embedding Model**: Using older Cohere model instead of latest
-
-### 🤔 **Generation Issues**  
-1. **Prompt Engineering**: Prompt may not effectively prevent hallucination
-2. **Temperature Settings**: May be too high, causing inconsistency
-3. **Max Token Limits**: May cut off responses prematurely
-
-### ⚡ **Performance Issues**
-1. **Inefficient Processing**: Some operations may be unnecessarily slow
-2. **Memory Usage**: Vector database operations may not be optimized
-3. **Concurrent Handling**: May not scale well under load
-
-### 🎯 **Quality Issues**
-1. **Response Consistency**: Similar queries may get very different responses
-2. **Source Attribution**: Attribution accuracy may be questionable
-3. **Edge Case Handling**: May not gracefully handle unusual inputs
-
-## Testing Strategies
-
-### 📊 **Quality Metrics**
-- **Response Relevance**: Semantic similarity to expected answers
-- **Faithfulness**: Grounding in retrieved documents
-- **Consistency**: Similar responses to similar queries
-- **Completeness**: Adequate depth and coverage
-
-### 🔍 **Discovery Methods**
-- **Behavioral Analysis**: Compare responses across similar queries
-- **Code Review**: Examine parameters and configuration
-- **Performance Profiling**: Measure component timing
-- **Edge Case Testing**: Unusual inputs and adversarial queries
-
-### 🛠 **Tools Provided**
-- **Automated Test Suite**: `tests/test_rag_pipeline.py`
-- **Evaluation Framework**: `tests/evaluation_framework.py`
-- **Performance Benchmarks**: Built-in timing and statistics
-- **Quality Scorers**: Response quality assessment functions
+### Environment Setup
+- Copy `.env.template` to `.env`
+- Set `COHERE_API_KEY` in `.env`
 
 ## Usage Examples
 
@@ -348,50 +191,24 @@ curl -X POST http://localhost:5000/api/chat \
      -d '{"message": "What is hallucination in GenAI?"}'
 ```
 
-### Running Test Suite
+### Running Exercise 3 Frameworks
 ```bash
-# Install pytest if not included
-pip install pytest
-
-# Run all tests (with proper imports fixed)
-python tests/test_rag_pipeline.py
-python tests/test_regression_framework.py
-
-# Or using pytest
-python -m pytest tests/test_rag_pipeline.py -v
-python -m pytest tests/test_regression_framework.py -v
-
 # Run evaluation framework
 python tests/evaluation_framework.py
-```
 
-### Running Experiments
-```bash
-# Interactive experiment menu
-python -m experiments.run_experiments
-
-# Individual experiments
-python -m experiments.chunking_experiments
-python -m experiments.embedding_experiments
-python -m experiments.generation_experiments
-python -m experiments.retrieval_experiments
-python -m experiments.system_optimization_experiments
-```
-
-### Running Regression Tests
-```bash
-# Full regression test suite
+# Run regression testing framework
 python regression_testing/regression_testing.py
+```
 
-# Interactive demo (recommended - uses correct virtual environment)
-python run_demo_with_venv.py
-# Then select option 4 for framework validation
+### Running Exercise 4 Retrieval Tuning Support
+```bash
+python -m experiments.retrieval_experiments
+```
 
-# Or run demo directly
-python regression_testing/demo_regression_testing.py
-
-# Quick regression test
-python regression_testing/regression_testing.py --quick
+### Running Exercise 7 and 9 Automation
+```bash
+python section7_nfr_quickrun.py
+python section9_agentic_test_suite.py
 ```
 
 ### Quality Assessment
@@ -432,34 +249,30 @@ print(f"Quality Gate: {'PASSED' if gate_passed else 'FAILED'}")
 ## Learning Paths
 
 ### 🎓 **Beginner Track**
-1. Explore the chat interface and basic functionality
-2. Run simple API tests with curl
-3. Use the provided test suite to understand testing concepts
-4. Run experiments to see optimization effects
+1. Complete student labs in order: Exercise 1 -> 4 (RAG section)
+2. Deliver the section bridge before starting Exercise 5
+3. Complete Exercise 5 -> 9 (agentic section)
+4. Use Section 7 and 9 automation scripts for standardized evidence
 
 ### 🔬 **Intermediate Track**  
-1. Analyze the evaluation framework results
-2. Run regression tests and understand quality metrics
-3. Write custom test cases for specific scenarios
-4. Investigate performance bottlenecks
-5. Examine retrieval quality and source attribution
+1. Map each exercise deliverable to one reusable rubric/checklist
+2. Add 2-3 custom prompts per exercise to extend coverage
+3. Compare baseline and post-change behavior using quick-run artifacts
+4. Create a release recommendation from Exercise 9 evidence
 
 ### 🚀 **Advanced Track**
-1. Discover and document intentional issues using experiments
-2. Propose and implement fixes in the actual system
-3. Create custom regression test cases with gold standards
-4. Develop custom evaluation metrics and quality gates
-3. Develop custom evaluation metrics
-4. Design production monitoring strategies
+1. Extend `section7_nfr_quickrun.py` with additional NFR scenarios
+2. Extend `section9_agentic_test_suite.py` with new showstopper gates
+3. Integrate suite outputs into CI (artifact upload + gate decision)
+4. Add production monitoring and drift checks aligned to Exercise 9
 
 ## Troubleshooting
 
 ### Common Setup Issues
 
 **"ModuleNotFoundError: No module named 'app' or 'regression_testing'"**
-- Import issues have been FIXED in the test files  
-- Tests now properly add the project root to Python path
-- Use `python tests/test_rag_pipeline.py` or `python tests/test_regression_framework.py`
+- Ensure commands are run from repository root
+- Use the launcher (`python launch.py`) or run `python regression_testing/regression_testing.py`
 
 **"KeyError: 'failed_tests' or 'avg_response_length'"**
 - These issues have been FIXED in the test framework
@@ -468,7 +281,7 @@ print(f"Quality Gate: {'PASSED' if gate_passed else 'FAILED'}")
 **"Import cohere could not be resolved"**
 - Ensure virtual environment is activated: `training-env\Scripts\activate`
 - Run `pip install -r requirements.txt`
-- Use `run_demo_with_venv.py` for automatic virtual environment handling
+- Use `python launch.py` to run exercise workflows consistently
 
 **"tf-keras compatibility issues with Keras 3"**
 - tf-keras has been added to requirements.txt
@@ -476,7 +289,7 @@ print(f"Quality Gate: {'PASSED' if gate_passed else 'FAILED'}")
 - This resolves Keras 3 compatibility issues in the regression testing framework
 
 **"COHERE_API_KEY not found"**
-- Copy `.env.example` to `.env`
+- Copy `.env.template` to `.env`
 - Add your Cohere API key to the `.env` file
 
 **"ChromaDB initialization failed"**

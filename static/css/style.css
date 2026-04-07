@@ -55,6 +55,78 @@ body {
     gap: 12px;
 }
 
+.instructor-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #f59e0b;
+    background: #fffbeb;
+}
+
+.instructor-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.instructor-controls input[type="number"] {
+    width: 64px;
+    padding: 4px 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #1f2937;
+    font-size: 0.85rem;
+}
+
+.agent-debug-block {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dbeafe;
+    background: #eff6ff;
+}
+
+.agent-debug-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 6px;
+}
+
+.agent-debug-state {
+    font-size: 0.75rem;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.agent-debug-section {
+    margin-top: 8px;
+}
+
+.agent-debug-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.agent-debug-section ol {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 0.75rem;
+    color: #374151;
+}
+
+.agent-debug-section li {
+    margin-bottom: 4px;
+}
+
 .status-indicator {
     display: flex;
     align-items: center;
@@ -671,6 +743,7 @@ body {
     .header-actions {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
     }
     
     .messages-container {

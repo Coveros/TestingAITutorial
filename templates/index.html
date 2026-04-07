@@ -18,6 +18,33 @@
             <div class="header-actions">
                 <button id="clearChat" class="btn btn-secondary">Clear Chat</button>
                 <button id="showStats" class="btn btn-secondary">Stats</button>
+                <div id="instructorControls" class="instructor-controls" style="display: none;">
+                    <label class="instructor-toggle" for="tempOverrideEnabled">
+                        <input type="checkbox" id="tempOverrideEnabled">
+                        Instructor Temp
+                    </label>
+                    <input
+                        id="temperatureInput"
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.1"
+                        value="0.7"
+                        aria-label="Temperature override"
+                    >
+                    <label class="instructor-toggle" for="agentModeEnabled">
+                        <input type="checkbox" id="agentModeEnabled">
+                        Agent Mode
+                    </label>
+                    <label class="instructor-toggle" for="showTraceEnabled">
+                        <input type="checkbox" id="showTraceEnabled">
+                        Show Trace
+                    </label>
+                    <label class="instructor-toggle" for="crewModeEnabled">
+                        <input type="checkbox" id="crewModeEnabled">
+                        Crew Mode
+                    </label>
+                </div>
                 <div class="status-indicator" id="statusIndicator">
                     <div class="status-dot"></div>
                     <span>Connecting...</span>

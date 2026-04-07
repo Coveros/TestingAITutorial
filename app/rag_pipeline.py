@@ -325,11 +325,12 @@ class RAGPipeline:
             self.stats['errors'] += 1
             raise
     
-    def _generate_response(self, query: str, context_docs: List[str]) -> str:
+    def _generate_response(self, query: str, context_docs: List[str], temperature: Optional[float] = None) -> str:
         """Generate response using Cohere with retrieved context."""
         try:
             # Prepare context from retrieved documents
             context = "\n\n".join(context_docs[:3])  # Use top 3 documents
+            effective_temperature = 0.7 if temperature is None else float(temperature)
             
             # Generate response with Cohere Chat API
             response = self.cohere_client.chat(
@@ -341,7 +342,7 @@ Context:
 
 Based on the provided context, please answer the user's question. Use only the information from the context provided. If the context doesn't contain relevant information to answer the question, say so clearly.""",
                 max_tokens=300,  # INTENTIONAL ISSUE: Sometimes too short for complete answers
-                temperature=0.7,  # INTENTIONAL ISSUE: Slightly high temperature causes inconsistency
+                temperature=effective_temperature,  # Defaults to legacy value unless overridden by API/demo
             )
             
             return response.text.strip()
@@ -351,7 +352,7 @@ Based on the provided context, please answer the user's question. Use only the i
             self.stats['errors'] += 1
             raise
     
-    def query(self, user_query: str) -> Dict[str, Any]:
+    def query(self, user_query: str, temperature: Optional[float] = None) -> Dict[str, Any]:
         """Process a user query and return response with metadata."""
         start_time = time.time()
         
@@ -366,8 +367,11 @@ Based on the provided context, please answer the user's question. Use only the i
             # Generate response
             response_text = self._generate_response(
                 user_query, 
-                retrieval_results['documents']
+                retrieval_results['documents'],
+                temperature=temperature
             )
+
+            effective_temperature = 0.7 if temperature is None else float(temperature)
             
             # Calculate total response time
             total_time = time.time() - start_time
@@ -393,7 +397,8 @@ Based on the provided context, please answer the user's question. Use only the i
                 ],
                 'retrieval_time': retrieval_results['retrieval_time'],
                 'generation_time': total_time - retrieval_results['retrieval_time'],
-                'total_time': total_time
+                'total_time': total_time,
+                'temperature': effective_temperature
             }
             
             return response_data

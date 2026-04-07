@@ -12,7 +12,7 @@ chromadb>=0.4.0
 # Testing framework
 pytest>=7.0.0
 
-# HTTP requests (used in tests/test_rag_pipeline.py)
+# HTTP requests
 requests>=2.28.0
 
 # Environment and configuration

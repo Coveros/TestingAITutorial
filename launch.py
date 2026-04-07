@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Quick launcher for GenAI Testing Tutorial experiments.
+Quick launcher for the current Exercise 1-9 curriculum.
 
-This script provides easy access to all testing and experiment capabilities
-in the reorganized project structure.
+This launcher exposes only the workflows used by the reconfigured course.
 """
 
 import os
@@ -15,42 +14,29 @@ def show_menu():
     print("🧪 GenAI Testing Tutorial - Quick Launcher")
     print("=" * 60)
     print()
-    print("1. 🔬 Run Optimization Experiments")
-    print("   Interactive menu-driven experiments")
-    print()
-    print("2. 🧪 Run Regression Testing")
+    print("1. 🧪 Run Regression Testing")
     print("   Test against gold standards with quality gates")
     print()
-    print("3. 🎮 Regression Testing Demo")
-    print("   Interactive tutorial and framework validation")
+    print("2. 📊 Run Evaluation Framework")
+    print("   Metric definitions used in Exercise 3")
     print()
-    print("4. 🧑‍💻 Run Unit Tests")
-    print("   Traditional pytest-based testing")
+    print("3. 🔍 Run Retrieval Experiment")
+    print("   Optional tuning support for Exercise 4")
     print()
-    print("5. 📊 Run Evaluation Framework")
-    print("   Advanced quality assessment tools")
-    print()
-    print("6. 🚀 Start Flask Application")
+    print("4. 🚀 Start Flask Application")
     print("   Launch the chat interface")
     print()
-    print("7. 🧪 Lightweight Regression Demo")
-    print("   Works without heavy dependencies")
+    print("5. 🛡️ Run Section 7 NFR Quick-Run")
+    print("   Generate Exercise 7 evidence artifacts")
     print()
-    print("8. 📚 Open Documentation")
+    print("6. 🤖 Run Section 9 Agentic CI Suite")
+    print("   Generate Exercise 9 gate artifacts")
+    print()
+    print("7. 📚 Open Documentation")
     print("   View comprehensive guides and documentation")
     print()
     print("0. Exit")
     print()
-
-def run_experiments():
-    """Launch optimization experiments."""
-    print("🔬 Launching Optimization Experiments...")
-    try:
-        subprocess.run([sys.executable, "-m", "experiments.run_experiments"], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error running experiments: {e}")
-    except FileNotFoundError:
-        print("❌ Python not found. Make sure Python is in your PATH.")
 
 def run_regression_testing():
     """Launch regression testing."""
@@ -71,37 +57,6 @@ def run_regression_testing():
         except FileNotFoundError:
             print("❌ Python not found. Make sure Python is in your PATH.")
 
-def run_regression_demo():
-    """Launch regression testing demo."""
-    print("🎮 Launching Regression Testing Demo...")
-    venv_python = r"c:\Users\jpayne\Documents\Training\Notebooks for ML classes\training-env\Scripts\python.exe"
-    
-    if os.path.exists(venv_python):
-        print("Using training-env virtual environment with tf-keras...")
-        try:
-            demo_path = os.path.join(os.path.dirname(__file__), "regression_testing", "demo_regression_testing.py")
-            subprocess.run([venv_python, demo_path], check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Error running regression demo: {e}")
-    else:
-        try:
-            subprocess.run([sys.executable, "-m", "regression_testing.demo_regression_testing"], check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Error running regression demo: {e}")
-        except FileNotFoundError:
-            print("❌ Python not found. Make sure Python is in your PATH.")
-
-def run_unit_tests():
-    """Run unit tests."""
-    print("🧑‍💻 Running Unit Tests...")
-    try:
-        subprocess.run([sys.executable, "-m", "pytest", "tests/test_rag_pipeline.py", "-v"], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error running unit tests: {e}")
-        print("Make sure pytest is installed: pip install pytest")
-    except FileNotFoundError:
-        print("❌ Python not found. Make sure Python is in your PATH.")
-
 def run_evaluation_framework():
     """Run evaluation framework."""
     print("📊 Running Evaluation Framework...")
@@ -112,13 +67,43 @@ def run_evaluation_framework():
     except FileNotFoundError:
         print("❌ Python not found. Make sure Python is in your PATH.")
 
+def run_retrieval_experiment():
+    """Run optional retrieval tuning experiment used by Exercise 4."""
+    print("🔍 Running Retrieval Experiment...")
+    try:
+        subprocess.run([sys.executable, "experiments/retrieval_experiments.py"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error running retrieval experiment: {e}")
+    except FileNotFoundError:
+        print("❌ Python not found. Make sure Python is in your PATH.")
+
 def start_flask_app():
     """Start the Flask application."""
+    venv_python = r"c:\Users\jpayne\Documents\Training\Notebooks for ML classes\training-env\Scripts\python.exe"
+    python_exec = venv_python if os.path.exists(venv_python) else sys.executable
+
+    if python_exec == venv_python:
+        print("Using training-env virtual environment...")
+
     print("🚀 Starting Flask Application...")
     print("The chat interface will be available at: http://localhost:5000")
     print("Press Ctrl+C to stop the server.")
     try:
-        subprocess.run([sys.executable, "run.py"], check=True)
+        # Preflight dependency check so users get an actionable fix command.
+        dependency_check = subprocess.run(
+            [python_exec, "-c", "import flask, flask_cors"],
+            capture_output=True,
+            text=True,
+        )
+
+        if dependency_check.returncode != 0:
+            print("❌ Missing required Flask dependencies for this Python environment.")
+            print(f"Using Python: {python_exec}")
+            print("Install dependencies with:")
+            print(f"  \"{python_exec}\" -m pip install -r requirements.txt")
+            return
+
+        subprocess.run([python_exec, "run.py"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"❌ Error starting Flask app: {e}")
     except KeyboardInterrupt:
@@ -126,13 +111,23 @@ def start_flask_app():
     except FileNotFoundError:
         print("❌ Python not found. Make sure Python is in your PATH.")
 
-def run_lightweight_demo():
-    """Run lightweight regression testing demo."""
-    print("🧪 Launching Lightweight Regression Demo...")
+def run_section7_quickrun():
+    """Run Section 7 quick-run artifact generator."""
+    print("🛡️ Running Section 7 NFR Quick-Run...")
     try:
-        subprocess.run([sys.executable, "lightweight_regression_demo.py"], check=True)
+        subprocess.run([sys.executable, "section7_nfr_quickrun.py"], check=True)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error running lightweight demo: {e}")
+        print(f"❌ Error running Section 7 quick-run: {e}")
+    except FileNotFoundError:
+        print("❌ Python not found. Make sure Python is in your PATH.")
+
+def run_section9_suite():
+    """Run Section 9 agentic CI suite artifact generator."""
+    print("🤖 Running Section 9 Agentic CI Suite...")
+    try:
+        subprocess.run([sys.executable, "section9_agentic_test_suite.py"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error running Section 9 suite: {e}")
     except FileNotFoundError:
         print("❌ Python not found. Make sure Python is in your PATH.")
 
@@ -142,12 +137,9 @@ def open_documentation():
     print()
     print("Main documentation files:")
     print("• README.md - Main project overview (this directory)")
-    print("• docs/EXPERIMENTS_README.md - Detailed experiment guide")
-    print("• docs/REGRESSION_TESTING_README.md - Regression testing guide")
-    print("• docs/STUDENT_GUIDE.md - Complete student tutorial")
-    print("• docs/PROJECT_PLAN.md - Implementation details")
-    print("• experiments/README.md - Experiments package overview")
-    print("• regression_testing/README.md - Regression testing overview")
+    print("• docs/Exercise-1.md ... docs/Exercise-9.md - Student lab guides")
+    print("• docs/Exercise-1-Instructor-Notes.md ... Exercise-9-Instructor-Notes.md")
+    print("• docs/Section-Bridge-RAG-to-Agentic.md - Section transition deck text")
     print()
     print("Online documentation:")
     print("• Open any .md file in a text editor or markdown viewer")
@@ -171,29 +163,27 @@ def main():
         show_menu()
         
         try:
-            choice = input("Select option (0-8): ").strip()
+            choice = input("Select option (0-7): ").strip()
             
             if choice == "0":
                 print("👋 Happy testing! Remember to explore all the testing approaches!")
                 break
             elif choice == "1":
-                run_experiments()
-            elif choice == "2":
                 run_regression_testing()
-            elif choice == "3":
-                run_regression_demo()
-            elif choice == "4":
-                run_unit_tests()
-            elif choice == "5":
+            elif choice == "2":
                 run_evaluation_framework()
-            elif choice == "6":
+            elif choice == "3":
+                run_retrieval_experiment()
+            elif choice == "4":
                 start_flask_app()
+            elif choice == "5":
+                run_section7_quickrun()
+            elif choice == "6":
+                run_section9_suite()
             elif choice == "7":
-                run_lightweight_demo()
-            elif choice == "8":
                 open_documentation()
             else:
-                print("❌ Invalid choice. Please select 0-8.")
+                print("❌ Invalid choice. Please select 0-7.")
             
             if choice != "0" and choice != "6":  # Don't pause after Flask app
                 input("\nPress Enter to return to menu...")

@@ -2,8 +2,10 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import os
 import logging
+import uuid
 from dotenv import load_dotenv
 from app.rag_pipeline import RAGPipeline
+from app.agentic_testops import TestOpsAgent
 import time
 import traceback
 
@@ -23,6 +25,7 @@ CORS(app)
 
 # Initialize RAG pipeline
 rag_pipeline = None
+agentic_pipeline = TestOpsAgent()
 
 def initialize_rag():
     """Initialize the RAG pipeline with error handling."""
@@ -60,17 +63,53 @@ def chat():
                 'error': 'Empty message provided',
                 'status': 'error'
             }), 400
-        
-        # Check if RAG pipeline is initialized
-        if rag_pipeline is None:
-            if not initialize_rag():
+
+        mode = str(data.get('mode', 'rag')).strip().lower()
+        if mode not in ('rag', 'agentic'):
+            return jsonify({
+                'error': "Invalid mode. Use 'rag' or 'agentic'",
+                'status': 'error'
+            }), 400
+
+        session_id = str(data.get('session_id') or uuid.uuid4())
+        include_trace = bool(data.get('include_trace', False))
+        crew_mode = bool(data.get('crew_mode', False))
+
+        requested_temperature = None
+        if 'temperature' in data and data['temperature'] is not None:
+            try:
+                requested_temperature = float(data['temperature'])
+            except (TypeError, ValueError):
                 return jsonify({
-                    'error': 'RAG pipeline not available',
+                    'error': 'Invalid temperature value. Must be a number between 0.0 and 1.0',
                     'status': 'error'
-                }), 500
+                }), 400
+
+            if requested_temperature < 0.0 or requested_temperature > 1.0:
+                return jsonify({
+                    'error': 'Temperature out of range. Use a value between 0.0 and 1.0',
+                    'status': 'error'
+                }), 400
         
-        # Get response from RAG pipeline
-        response_data = rag_pipeline.query(user_message)
+        if mode == 'agentic':
+            # Process with the test-ops agentic loop
+            response_data = agentic_pipeline.process(
+                user_message,
+                session_id=session_id,
+                include_trace=include_trace,
+                crew_mode=crew_mode
+            )
+        else:
+            # Check if RAG pipeline is initialized
+            if rag_pipeline is None:
+                if not initialize_rag():
+                    return jsonify({
+                        'error': 'RAG pipeline not available',
+                        'status': 'error'
+                    }), 500
+            
+            # Get response from RAG pipeline
+            response_data = rag_pipeline.query(user_message, temperature=requested_temperature)
         
         # Calculate response time
         response_time = time.time() - start_time
@@ -78,6 +117,8 @@ def chat():
         # Add metadata to response
         response_data['response_time'] = round(response_time, 3)
         response_data['status'] = 'success'
+        response_data['mode'] = mode
+        response_data['session_id'] = session_id
         
         logger.info(f"Query processed successfully in {response_time:.3f}s")
         return jsonify(response_data)
@@ -130,11 +171,21 @@ def health_check():
 def get_stats():
     """Get pipeline statistics for testing purposes."""
     try:
-        if rag_pipeline is None:
-            return jsonify({'error': 'RAG pipeline not initialized'}), 500
-        
-        stats = rag_pipeline.get_stats()
-        return jsonify(stats)
+        rag_stats = {}
+        if rag_pipeline is not None:
+            rag_stats = rag_pipeline.get_stats()
+
+        agentic_stats = agentic_pipeline.get_stats()
+
+        return jsonify({
+            'rag': rag_stats,
+            'agentic': agentic_stats,
+            # Preserve legacy top-level keys for existing UI compatibility
+            'queries_processed': rag_stats.get('queries_processed', 0),
+            'average_response_time': rag_stats.get('average_response_time', 0),
+            'documents_loaded': rag_stats.get('documents_loaded', 0),
+            'error_rate': rag_stats.get('error_rate', 0),
+        })
     except Exception as e:
         logger.error(f"Error getting stats: {str(e)}")
         return jsonify({'error': str(e)}), 500

@@ -6,8 +6,12 @@ class ChatApp {
         this.apiEndpoint = '/api/chat';
         this.statsEndpoint = '/api/stats';
         this.healthEndpoint = '/api/health';
+        this.instructorMode = new URLSearchParams(window.location.search).get('instructor') === '1';
+        this.sessionId = localStorage.getItem('chatSessionId') || `session-${Date.now()}`;
+        localStorage.setItem('chatSessionId', this.sessionId);
         
         this.initializeElements();
+        this.initializeInstructorControls();
         this.setupEventListeners();
         this.checkSystemHealth();
         
@@ -29,6 +33,12 @@ class ChatApp {
         this.statusIndicator = document.getElementById('statusIndicator');
         this.clearChatButton = document.getElementById('clearChat');
         this.showStatsButton = document.getElementById('showStats');
+        this.instructorControls = document.getElementById('instructorControls');
+        this.tempOverrideEnabled = document.getElementById('tempOverrideEnabled');
+        this.temperatureInput = document.getElementById('temperatureInput');
+        this.agentModeEnabled = document.getElementById('agentModeEnabled');
+        this.showTraceEnabled = document.getElementById('showTraceEnabled');
+        this.crewModeEnabled = document.getElementById('crewModeEnabled');
         
         // Modal elements
         this.statsModal = document.getElementById('statsModal');
@@ -37,6 +47,42 @@ class ChatApp {
         
         // Toast elements
         this.errorToast = document.getElementById('errorToast');
+    }
+
+    initializeInstructorControls() {
+        if (
+            !this.instructorControls ||
+            !this.tempOverrideEnabled ||
+            !this.temperatureInput ||
+            !this.agentModeEnabled ||
+            !this.showTraceEnabled ||
+            !this.crewModeEnabled
+        ) {
+            return;
+        }
+
+        if (!this.instructorMode) {
+            this.instructorControls.style.display = 'none';
+            return;
+        }
+
+        this.instructorControls.style.display = 'flex';
+
+        const savedEnabled = localStorage.getItem('instructorTempEnabled');
+        const savedTemp = localStorage.getItem('instructorTempValue');
+        const savedAgentMode = localStorage.getItem('instructorAgentModeEnabled');
+        const savedTraceMode = localStorage.getItem('instructorShowTraceEnabled');
+        const savedCrewMode = localStorage.getItem('instructorCrewModeEnabled');
+
+        this.tempOverrideEnabled.checked = savedEnabled === 'true';
+        if (savedTemp !== null && savedTemp !== '') {
+            this.temperatureInput.value = savedTemp;
+        }
+        this.agentModeEnabled.checked = savedAgentMode === 'true';
+        this.showTraceEnabled.checked = savedTraceMode === 'true';
+        this.crewModeEnabled.checked = savedCrewMode === 'true';
+
+        this.updateInstructorTemperatureState();
     }
     
     setupEventListeners() {
@@ -50,6 +96,32 @@ class ChatApp {
         // Header actions
         this.clearChatButton.addEventListener('click', () => this.clearChat());
         this.showStatsButton.addEventListener('click', () => this.showStats());
+
+        if (this.instructorMode && this.tempOverrideEnabled && this.temperatureInput) {
+            this.tempOverrideEnabled.addEventListener('change', () => {
+                localStorage.setItem('instructorTempEnabled', String(this.tempOverrideEnabled.checked));
+                this.updateInstructorTemperatureState();
+            });
+
+            this.temperatureInput.addEventListener('change', () => {
+                const value = this.normalizeTemperatureValue(this.temperatureInput.value);
+                this.temperatureInput.value = value.toFixed(1);
+                localStorage.setItem('instructorTempValue', String(value));
+            });
+
+            this.agentModeEnabled.addEventListener('change', () => {
+                localStorage.setItem('instructorAgentModeEnabled', String(this.agentModeEnabled.checked));
+                this.updateInstructorTemperatureState();
+            });
+
+            this.showTraceEnabled.addEventListener('change', () => {
+                localStorage.setItem('instructorShowTraceEnabled', String(this.showTraceEnabled.checked));
+            });
+
+            this.crewModeEnabled.addEventListener('change', () => {
+                localStorage.setItem('instructorCrewModeEnabled', String(this.crewModeEnabled.checked));
+            });
+        }
         
         // Modal events
         this.closeStatsButton.addEventListener('click', () => this.closeStats());
@@ -133,13 +205,29 @@ class ChatApp {
         const typingId = this.showTypingIndicator();
         
         try {
+            const requestPayload = { message: message };
+            requestPayload.session_id = this.sessionId;
+
+            if (this.getAgentModeEnabled()) {
+                requestPayload.mode = 'agentic';
+                requestPayload.include_trace = this.getTraceEnabled();
+                requestPayload.crew_mode = this.getCrewModeEnabled();
+            } else {
+                requestPayload.mode = 'rag';
+            }
+
+            const selectedTemperature = this.getSelectedTemperature();
+            if (selectedTemperature !== null) {
+                requestPayload.temperature = selectedTemperature;
+            }
+
             // Send request to API
             const response = await fetch(this.apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify(requestPayload)
             });
             
             const data = await response.json();
@@ -156,7 +244,15 @@ class ChatApp {
                 sources: data.sources,
                 responseTime: data.response_time,
                 retrievalTime: data.retrieval_time,
-                generationTime: data.generation_time
+                generationTime: data.generation_time,
+                temperature: data.temperature,
+                mode: data.mode,
+                toolCalls: data.tool_calls,
+                agentTrace: data.agent_trace,
+                stateSnapshot: data.state_snapshot,
+                handoffs: data.handoffs,
+                trajectoryMetrics: data.trajectory_metrics,
+                crewMode: data.crew_mode
             });
             
             // Store in history
@@ -230,8 +326,54 @@ class ChatApp {
         if (metadata.responseTime) {
             metaInfo += ` • ${(metadata.responseTime * 1000).toFixed(0)}ms`;
         }
+        if (metadata.temperature !== undefined && metadata.temperature !== null) {
+            metaInfo += ` • temp ${Number(metadata.temperature).toFixed(2)}`;
+        }
+        if (metadata.mode) {
+            metaInfo += ` • ${metadata.mode}`;
+        }
+        if (metadata.crewMode) {
+            metaInfo += ' • crew';
+        }
         if (metadata.error) {
             metaInfo += ' • Error';
+        }
+
+        let agentBlock = '';
+        if ((metadata.toolCalls && metadata.toolCalls.length > 0) || (metadata.agentTrace && metadata.agentTrace.length > 0)) {
+            const tools = (metadata.toolCalls || []).map((call, idx) => {
+                const details = [];
+                if (call.scope) details.push(`scope=${call.scope}`);
+                if (call.test_id) details.push(`test_id=${call.test_id}`);
+                if (call.severity) details.push(`severity=${call.severity}`);
+                return `<li><strong>${idx + 1}. ${call.tool}</strong>${details.length ? ` (${details.join(', ')})` : ''}</li>`;
+            }).join('');
+
+            const trace = (metadata.agentTrace || []).map((step, idx) =>
+                `<li><strong>${idx + 1}. ${step.phase}</strong>: ${this.escapeHtml(step.content)}</li>`
+            ).join('');
+
+            const stateSummary = metadata.stateSnapshot && metadata.stateSnapshot.tracked_failure
+                ? `Tracked Failure: ${this.escapeHtml(metadata.stateSnapshot.tracked_failure)}`
+                : 'Tracked Failure: none';
+
+            const handoffs = (metadata.handoffs || []).map((h, idx) =>
+                `<li><strong>${idx + 1}. ${this.escapeHtml(h.from)} -> ${this.escapeHtml(h.to)}</strong>: ${this.escapeHtml(h.purpose || '')}</li>`
+            ).join('');
+
+            const metrics = metadata.trajectoryMetrics || {};
+            const metricsLine = `steps=${metrics.steps || 0}, tools=${metrics.tool_calls || 0}, handoffs=${metrics.handoffs || 0}, redundant=${metrics.redundant_tool_calls || 0}`;
+
+            agentBlock = `
+                <div class="agent-debug-block">
+                    <div class="agent-debug-header">Agent Execution</div>
+                    <div class="agent-debug-state">${stateSummary}</div>
+                    <div class="agent-debug-state">Trajectory: ${metricsLine}</div>
+                    ${tools ? `<div class="agent-debug-section"><div class="agent-debug-label">Tools Called</div><ol>${tools}</ol></div>` : ''}
+                    ${handoffs ? `<div class="agent-debug-section"><div class="agent-debug-label">Handoffs</div><ol>${handoffs}</ol></div>` : ''}
+                    ${trace ? `<div class="agent-debug-section"><div class="agent-debug-label">Trace</div><ol>${trace}</ol></div>` : ''}
+                </div>
+            `;
         }
         
         return `
@@ -240,6 +382,7 @@ class ChatApp {
                 <div class="message-bubble">
                     ${this.formatMessageContent(content)}
                     ${sourcesHTML}
+                    ${agentBlock}
                 </div>
                 <div class="message-meta">
                     <span>${metaInfo}</span>
@@ -360,6 +503,7 @@ class ChatApp {
     }
     
     renderStats(stats, health) {
+        const agentic = stats.agentic || {};
         const statsHTML = `
             <div class="stats-grid">
                 <div class="stat-card">
@@ -377,6 +521,18 @@ class ChatApp {
                 <div class="stat-card">
                     <div class="stat-value">${((stats.error_rate || 0) * 100).toFixed(1)}%</div>
                     <div class="stat-label">Error Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${agentic.tool_calls || 0}</div>
+                    <div class="stat-label">Agent Tool Calls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${agentic.blocked_actions || 0}</div>
+                    <div class="stat-label">Blocked Actions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${agentic.crew_requests || 0}</div>
+                    <div class="stat-label">Crew Requests</div>
                 </div>
             </div>
             
@@ -459,6 +615,77 @@ class ChatApp {
     
     hideToast() {
         this.errorToast.classList.remove('show');
+    }
+
+    updateInstructorTemperatureState() {
+        if (!this.temperatureInput || !this.tempOverrideEnabled || !this.agentModeEnabled || !this.showTraceEnabled || !this.crewModeEnabled) {
+            return;
+        }
+
+        const agentModeActive = this.agentModeEnabled.checked;
+        this.temperatureInput.disabled = !this.tempOverrideEnabled.checked || agentModeActive;
+        this.temperatureInput.style.opacity = this.temperatureInput.disabled ? '0.6' : '1';
+
+        this.showTraceEnabled.disabled = !agentModeActive;
+        this.showTraceEnabled.style.opacity = agentModeActive ? '1' : '0.6';
+
+        if (!agentModeActive) {
+            this.showTraceEnabled.checked = false;
+            this.crewModeEnabled.checked = false;
+            localStorage.setItem('instructorShowTraceEnabled', 'false');
+            localStorage.setItem('instructorCrewModeEnabled', 'false');
+        }
+
+        this.crewModeEnabled.disabled = !agentModeActive;
+        this.crewModeEnabled.style.opacity = agentModeActive ? '1' : '0.6';
+    }
+
+    normalizeTemperatureValue(rawValue) {
+        const parsed = Number(rawValue);
+        if (Number.isNaN(parsed)) {
+            return 0.7;
+        }
+        return Math.max(0, Math.min(1, parsed));
+    }
+
+    getSelectedTemperature() {
+        if (!this.instructorMode || !this.tempOverrideEnabled || !this.temperatureInput) {
+            return null;
+        }
+
+        if (this.getAgentModeEnabled()) {
+            return null;
+        }
+
+        if (!this.tempOverrideEnabled.checked) {
+            return null;
+        }
+
+        const normalized = this.normalizeTemperatureValue(this.temperatureInput.value);
+        this.temperatureInput.value = normalized.toFixed(1);
+        localStorage.setItem('instructorTempValue', String(normalized));
+        return normalized;
+    }
+
+    getAgentModeEnabled() {
+        if (!this.instructorMode || !this.agentModeEnabled) {
+            return false;
+        }
+        return this.agentModeEnabled.checked;
+    }
+
+    getTraceEnabled() {
+        if (!this.instructorMode || !this.showTraceEnabled || !this.getAgentModeEnabled()) {
+            return false;
+        }
+        return this.showTraceEnabled.checked;
+    }
+
+    getCrewModeEnabled() {
+        if (!this.instructorMode || !this.crewModeEnabled || !this.getAgentModeEnabled()) {
+            return false;
+        }
+        return this.crewModeEnabled.checked;
     }
 }
 
