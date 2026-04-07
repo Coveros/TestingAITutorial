@@ -6,12 +6,18 @@ class ChatApp {
         this.apiEndpoint = '/api/chat';
         this.statsEndpoint = '/api/stats';
         this.healthEndpoint = '/api/health';
-        this.instructorMode = new URLSearchParams(window.location.search).get('instructor') === '1';
+        this.appFlags = window.APP_FLAGS || {};
+        this.queryParams = new URLSearchParams(window.location.search);
+        this.instructorMode = Boolean(this.appFlags.instructorMode) || this.queryParams.get('instructor') === '1';
+        this.exerciseNumber = Number(this.queryParams.get('exercise') || 0);
+        this.modeStorageKey = 'chatPreferredMode';
+        this.canUseAgentMode = true;
         this.sessionId = localStorage.getItem('chatSessionId') || `session-${Date.now()}`;
         localStorage.setItem('chatSessionId', this.sessionId);
         
         this.initializeElements();
         this.initializeInstructorControls();
+        this.initializeModeSwitch();
         this.setupEventListeners();
         this.checkSystemHealth();
         
@@ -39,6 +45,10 @@ class ChatApp {
         this.agentModeEnabled = document.getElementById('agentModeEnabled');
         this.showTraceEnabled = document.getElementById('showTraceEnabled');
         this.crewModeEnabled = document.getElementById('crewModeEnabled');
+        this.askModeBtn = document.getElementById('askModeBtn');
+        this.agentModeBtn = document.getElementById('agentModeBtn');
+        this.modeTemperature = document.getElementById('modeTemperature');
+        this.modeHint = document.getElementById('modeHint');
         
         // Modal elements
         this.statsModal = document.getElementById('statsModal');
@@ -84,6 +94,87 @@ class ChatApp {
 
         this.updateInstructorTemperatureState();
     }
+
+    initializeModeSwitch() {
+        if (!this.askModeBtn || !this.agentModeBtn) {
+            this.activeMode = 'ask';
+            return;
+        }
+
+        const saved = localStorage.getItem(this.modeStorageKey);
+        const queryWantsAgent = this.queryParams.get('agent') === '1';
+        const defaultByExercise = this.exerciseNumber >= 5;
+        const initialMode = saved || (queryWantsAgent || defaultByExercise ? 'agent' : 'ask');
+        this.setChatMode(initialMode, false);
+
+        this.askModeBtn.addEventListener('click', () => this.setChatMode('ask', true));
+        this.agentModeBtn.addEventListener('click', () => this.setChatMode('agent', true));
+
+        if (this.modeTemperature) {
+            const savedTemp = localStorage.getItem('chatModeTemperature');
+            if (savedTemp !== null && savedTemp !== '') {
+                this.modeTemperature.value = this.normalizeTemperatureValue(savedTemp).toFixed(1);
+            }
+            this.modeTemperature.addEventListener('change', () => {
+                const value = this.normalizeTemperatureValue(this.modeTemperature.value);
+                this.modeTemperature.value = value.toFixed(1);
+                localStorage.setItem('chatModeTemperature', String(value));
+            });
+        }
+    }
+
+    setChatMode(mode, persist) {
+        this.activeMode = mode === 'agent' ? 'agent' : 'ask';
+        if (persist) {
+            localStorage.setItem(this.modeStorageKey, this.activeMode);
+        }
+
+        if (this.askModeBtn && this.agentModeBtn) {
+            const askActive = this.activeMode === 'ask';
+            this.askModeBtn.classList.toggle('active', askActive);
+            this.agentModeBtn.classList.toggle('active', !askActive);
+            this.askModeBtn.setAttribute('aria-pressed', askActive ? 'true' : 'false');
+            this.agentModeBtn.setAttribute('aria-pressed', askActive ? 'false' : 'true');
+        }
+
+        if (this.instructorMode && this.agentModeEnabled) {
+            this.agentModeEnabled.checked = this.activeMode === 'agent';
+            this.updateInstructorTemperatureState();
+        }
+
+        this.updateModeHint();
+    }
+
+    getExerciseDefaults() {
+        return {
+            trace: this.exerciseNumber >= 6,
+            crew: this.exerciseNumber >= 8,
+        };
+    }
+
+    updateModeHint() {
+        if (!this.modeHint) {
+            return;
+        }
+
+        if (this.activeMode !== 'agent') {
+            this.modeHint.textContent = 'Ask mode: temperature is applied to RAG responses.';
+            return;
+        }
+
+        const defaults = this.getExerciseDefaults();
+        if (defaults.crew) {
+            this.modeHint.textContent = 'Agent mode: trace and crew are auto-enabled for this exercise.';
+            return;
+        }
+
+        if (defaults.trace) {
+            this.modeHint.textContent = 'Agent mode: trace is auto-enabled for this exercise.';
+            return;
+        }
+
+        this.modeHint.textContent = 'Agent mode: baseline agent flow (trace and crew off by default).';
+    }
     
     setupEventListeners() {
         // Form submission
@@ -110,7 +201,10 @@ class ChatApp {
             });
 
             this.agentModeEnabled.addEventListener('change', () => {
-                localStorage.setItem('instructorAgentModeEnabled', String(this.agentModeEnabled.checked));
+                if (this.instructorMode) {
+                    localStorage.setItem('instructorAgentModeEnabled', String(this.agentModeEnabled.checked));
+                }
+                this.setChatMode(this.agentModeEnabled.checked ? 'agent' : 'ask', true);
                 this.updateInstructorTemperatureState();
             });
 
@@ -623,6 +717,7 @@ class ChatApp {
         }
 
         const agentModeActive = this.agentModeEnabled.checked;
+
         this.temperatureInput.disabled = !this.tempOverrideEnabled.checked || agentModeActive;
         this.temperatureInput.style.opacity = this.temperatureInput.disabled ? '0.6' : '1';
 
@@ -649,43 +744,56 @@ class ChatApp {
     }
 
     getSelectedTemperature() {
-        if (!this.instructorMode || !this.tempOverrideEnabled || !this.temperatureInput) {
-            return null;
-        }
-
         if (this.getAgentModeEnabled()) {
             return null;
         }
 
-        if (!this.tempOverrideEnabled.checked) {
+        if (this.instructorMode && this.tempOverrideEnabled && this.temperatureInput && this.tempOverrideEnabled.checked) {
+            const normalizedInstructor = this.normalizeTemperatureValue(this.temperatureInput.value);
+            this.temperatureInput.value = normalizedInstructor.toFixed(1);
+            localStorage.setItem('instructorTempValue', String(normalizedInstructor));
+            return normalizedInstructor;
+        }
+
+        if (!this.modeTemperature) {
             return null;
         }
 
-        const normalized = this.normalizeTemperatureValue(this.temperatureInput.value);
-        this.temperatureInput.value = normalized.toFixed(1);
-        localStorage.setItem('instructorTempValue', String(normalized));
+        const normalized = this.normalizeTemperatureValue(this.modeTemperature.value);
+        this.modeTemperature.value = normalized.toFixed(1);
+        localStorage.setItem('chatModeTemperature', String(normalized));
         return normalized;
     }
 
     getAgentModeEnabled() {
-        if (!this.instructorMode || !this.agentModeEnabled) {
+        if (!this.canUseAgentMode) {
             return false;
         }
-        return this.agentModeEnabled.checked;
+        return this.activeMode === 'agent';
     }
 
     getTraceEnabled() {
-        if (!this.instructorMode || !this.showTraceEnabled || !this.getAgentModeEnabled()) {
+        if (!this.getAgentModeEnabled()) {
             return false;
         }
-        return this.showTraceEnabled.checked;
+
+        if (this.instructorMode) {
+            return Boolean(this.showTraceEnabled && this.showTraceEnabled.checked);
+        }
+
+        return this.getExerciseDefaults().trace;
     }
 
     getCrewModeEnabled() {
-        if (!this.instructorMode || !this.crewModeEnabled || !this.getAgentModeEnabled()) {
+        if (!this.getAgentModeEnabled()) {
             return false;
         }
-        return this.crewModeEnabled.checked;
+
+        if (this.instructorMode) {
+            return Boolean(this.crewModeEnabled && this.crewModeEnabled.checked);
+        }
+
+        return this.getExerciseDefaults().crew;
     }
 }
 

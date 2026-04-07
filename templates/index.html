@@ -16,6 +16,7 @@
                 <p>RAG Chatbot for Testing GenAI Applications</p>
             </div>
             <div class="header-actions">
+                <a href="{{ url_for('exercises_home', instructor=request.args.get('instructor'), agent=request.args.get('agent'), exercise=request.args.get('exercise')) }}" class="btn btn-secondary">Exercises</a>
                 <button id="clearChat" class="btn btn-secondary">Clear Chat</button>
                 <button id="showStats" class="btn btn-secondary">Stats</button>
                 <div id="instructorControls" class="instructor-controls" style="display: none;">
@@ -83,6 +84,15 @@
                             maxlength="1000"
                         ></textarea>
                         <div class="input-actions">
+                            <div class="chat-mode-bar" role="group" aria-label="Chat mode">
+                                <button type="button" id="askModeBtn" class="mode-btn active" aria-pressed="true">Ask</button>
+                                <button type="button" id="agentModeBtn" class="mode-btn" aria-pressed="false">Agent</button>
+                                <label class="mode-temp" for="modeTemperature">
+                                    Temp
+                                    <input id="modeTemperature" type="number" min="0" max="1" step="0.1" value="0.7" aria-label="Chat temperature">
+                                </label>
+                            </div>
+                            <span id="modeHint" class="mode-hint" aria-live="polite"></span>
                             <span class="character-count" id="characterCount">0/1000</span>
                             <button type="submit" id="sendButton" class="btn btn-primary">
                                 <span class="button-text">Send</span>
@@ -120,6 +130,11 @@
     </div>
 
     <!-- Scripts -->
+    <script>
+        window.APP_FLAGS = {
+            instructorMode: {{ instructor_mode|tojson if instructor_mode is defined else 'false' }}
+        };
+    </script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </body>
 </html>

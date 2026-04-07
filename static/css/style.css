@@ -471,9 +471,57 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
     padding: 12px 20px;
     background: #f9fafb;
     border-top: 1px solid #f3f4f6;
+}
+
+.chat-mode-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mode-btn {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mode-btn.active {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+}
+
+.mode-temp {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 6px;
+    color: #4b5563;
+    font-size: 0.8rem;
+}
+
+.mode-temp input {
+    width: 62px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 0.8rem;
+}
+
+.mode-hint {
+    color: #6b7280;
+    font-size: 0.78rem;
+    flex: 1 1 220px;
 }
 
 .character-count {

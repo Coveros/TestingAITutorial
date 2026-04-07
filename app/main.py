@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, abort
 from flask_cors import CORS
 import os
 import logging
 import uuid
+from pathlib import Path
 from dotenv import load_dotenv
 from app.rag_pipeline import RAGPipeline
 from app.agentic_testops import TestOpsAgent
@@ -23,9 +24,26 @@ static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'static')
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 CORS(app)
 
+DOCS_DIR = Path(os.path.dirname(os.path.dirname(__file__))) / 'docs'
+
+EXERCISE_CATALOG = [
+    {
+        'number': i,
+        'student_file': DOCS_DIR / f'Exercise-{i}.md',
+        'instructor_file': DOCS_DIR / f'Exercise-{i}-Instructor-Notes.md',
+        'student_title': f'Exercise {i}',
+        'instructor_title': f'Exercise {i} Instructor Notes',
+    }
+    for i in range(1, 10)
+]
+
 # Initialize RAG pipeline
 rag_pipeline = None
 agentic_pipeline = TestOpsAgent()
+
+
+def is_truthy(value) -> bool:
+    return str(value).strip().lower() in ('1', 'true', 'yes', 'on')
 
 def initialize_rag():
     """Initialize the RAG pipeline with error handling."""
@@ -42,7 +60,69 @@ def initialize_rag():
 @app.route('/')
 def index():
     """Serve the main chat interface."""
-    return render_template('index.html')
+    instructor_mode = is_truthy(request.args.get('instructor', '0'))
+
+    return render_template(
+        'index.html',
+        instructor_mode=instructor_mode,
+    )
+
+
+@app.route('/exercises')
+def exercises_home():
+    """Redirect to first exercise in student view."""
+    instructor_flag = is_truthy(request.args.get('instructor', '0'))
+    try:
+        requested_exercise = int(request.args.get('exercise', 1))
+    except (TypeError, ValueError):
+        requested_exercise = 1
+
+    if requested_exercise < 1 or requested_exercise > 9:
+        requested_exercise = 1
+
+    role = 'instructor' if instructor_flag else 'student'
+    if instructor_flag:
+        return redirect(url_for('exercise_view', number=requested_exercise, role=role, instructor='1'))
+    return redirect(url_for('exercise_view', number=requested_exercise, role=role))
+
+
+@app.route('/exercises/<int:number>')
+def exercise_view(number: int):
+    """Render exercise markdown as a clean in-app page."""
+    env_instructor = os.getenv('EXERCISE_HUB_ENABLE_INSTRUCTOR', 'false').strip().lower() == 'true'
+    query_instructor = is_truthy(request.args.get('instructor', '0'))
+    allow_instructor = env_instructor or query_instructor
+    role = str(request.args.get('role', 'student')).strip().lower()
+    if role not in ('student', 'instructor'):
+        role = 'student'
+    if role == 'instructor' and not allow_instructor:
+        role = 'student'
+
+    row = next((x for x in EXERCISE_CATALOG if x['number'] == number), None)
+    if row is None:
+        abort(404)
+
+    target_path = row['student_file'] if role == 'student' else row['instructor_file']
+    if not target_path.exists():
+        abort(404)
+
+    markdown_content = target_path.read_text(encoding='utf-8')
+
+    prev_num = number - 1 if number > 1 else None
+    next_num = number + 1 if number < 9 else None
+
+    return render_template(
+        'exercise_hub.html',
+        exercise_number=number,
+        role=role,
+        allow_instructor=allow_instructor,
+        instructor_query='1' if query_instructor else None,
+        markdown_content=markdown_content,
+        exercise_catalog=EXERCISE_CATALOG,
+        current_title=row['student_title'] if role == 'student' else row['instructor_title'],
+        prev_num=prev_num,
+        next_num=next_num,
+    )
 
 @app.route('/api/chat', methods=['POST'])
 def chat():

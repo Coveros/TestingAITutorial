@@ -146,11 +146,34 @@ class TestOpsAgent:
                 ],
             }
 
-        snippets = [
-            "Faithfulness checks whether responses are grounded in provided context.",
-            "Relevance measures whether the response actually answers the user intent.",
-            "Safety metrics are veto metrics: toxic output is always a hard fail.",
-        ]
+        if "key challenges" in lowered and "testing genai" in lowered:
+            snippets = [
+                "Non-determinism: the same prompt can yield different outputs across runs, so tests must use ranges and rubrics.",
+                "Hallucinations and grounding: responses can be fluent but incorrect, requiring faithfulness checks against sources.",
+                "Prompt and retrieval sensitivity: small wording changes can shift retrieval paths and final answers.",
+                "Safety and policy compliance: harmful or disallowed outputs must be treated as hard failures.",
+                "Evaluation design: teams need reliable golden sets, regression suites, and clear pass/fail thresholds.",
+            ]
+        elif "hallucination" in lowered:
+            snippets = [
+                "Use grounded reference checks: compare each claim to retrieved evidence, not just answer fluency.",
+                "Track unsupported claims rate and critical hallucination rate across repeated runs.",
+                "Add adversarial prompts that probe edge cases, missing context, and ambiguous wording.",
+                "Flag high-confidence wrong answers as priority defects for triage and regression protection.",
+            ]
+        elif "metrics" in lowered and ("rag" in lowered or "evaluate" in lowered):
+            snippets = [
+                "Retrieval metrics: recall@k, precision@k, and context relevance for retrieved chunks.",
+                "Generation metrics: answer relevance, faithfulness, completeness, and citation quality.",
+                "Safety metrics: toxicity, policy violations, and prompt-injection susceptibility.",
+                "Operational metrics: latency, failure rate, and cost per successful answer.",
+            ]
+        else:
+            snippets = [
+                "Faithfulness checks whether responses are grounded in provided context.",
+                "Relevance measures whether the response actually answers the user intent.",
+                "Safety metrics are veto metrics: toxic output is always a hard fail.",
+            ]
         return {
             "tool": "search_kb",
             "query": query,
@@ -409,7 +432,7 @@ class TestOpsAgent:
             observation = self._tool_search_kb(message)
             tool_calls.append(observation)
             self.stats["tool_calls"] += 1
-            response = "Here are relevant concepts:\n- " + "\n- ".join(observation["result"])
+            response = "Top testing points to focus on:\n- " + "\n- ".join(observation["result"])
 
         elif tool == "run_regression_suite":
             if "simulate dependency outage" in lowered:

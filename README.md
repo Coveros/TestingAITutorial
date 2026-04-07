@@ -58,15 +58,26 @@ Frontend (HTML/CSS/JS) → Flask Backend → RAG Pipeline → Cohere API
    # Edit .env and add your Cohere API key
    ```
 
+   Exercise Hub defaults to Student View only. Set `EXERCISE_HUB_ENABLE_INSTRUCTOR=True` in `.env` only for instructor-led sessions.
+
+   Student agentic access is available via `?agent=1`. Exercise pages automatically pass exercise context back to chat for exercise-aware defaults.
+
 5. **Run Application**
    ```bash
    python run.py
+   ```
+
+   If you see `ModuleNotFoundError` (for example `flask_cors`), dependencies were not installed in the interpreter you are using. Re-run:
+   ```bash
+   python -m pip install -r requirements.txt
    ```
 
 6. **Access Application**
    - Open http://localhost:5000
    - Chat interface should load
    - Try: "What are the key challenges in testing GenAI applications?"
+   - Use the bottom **Ask / Agent** toggle in chat to switch modes
+   - In Exercise 5-9 flows, Exercise Hub sends `exercise=<n>` so trace/crew defaults can auto-adjust by exercise context
 
 ## 🚀 Quick Start (Alternative)
 
