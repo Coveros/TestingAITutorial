@@ -12,7 +12,7 @@ Students just spent Exercises 1-4 learning to test a RAG chatbot. This bridge re
 
 ---
 
-## Slide 1 — What You Have Done (1 minute)
+## Slide 1 - What You Have Done (1 minute)
 
 **Say:**
 
@@ -31,50 +31,50 @@ Exercises 1-4: RAG Testing
 
 ---
 
-## Slide 2 — The Test Target So Far (1 minute)
+## Slide 2 - The Test Target So Far (1 minute)
 
 **Say:**
 
-> "Here's what we have been testing. A user sends a query. The retriever finds relevant documents. The generator reads those documents and produces a text response. That is it. One input, one output. We ask: 'Is this answer good?' Everything we measured — semantic similarity, pass/fail thresholds, regression deltas — is a judgment about the quality of that one output string."
+> "Here's what we have been testing. A user sends a query. The retriever finds relevant documents. The generator reads those documents and produces a text response. That is it. One input, one output. We ask: 'Is this answer good?' Everything we measured - semantic similarity, pass/fail thresholds, regression deltas - is a judgment about the quality of that one output string."
 
 **Slide content (diagram):**
 
 ```
 User Query
-    │
-    ▼
- Retriever ──► [relevant documents]
-    │
-    ▼
- Generator ──► Answer (text)
-    │
-    ▼
+   |
+   v
+ Retriever -> [relevant documents]
+   |
+   v
+ Generator -> Answer (text)
+   |
+   v
 Question we ask:
 "Was the answer good?"
 ```
 
 ---
 
-## Slide 3 — Now Meet an Agentic System (2 minutes)
+## Slide 3 - Now Meet an Agentic System (2 minutes)
 
 **Say:**
 
-> "An agentic system does not just produce one answer. It makes decisions. It calls tools. It maintains memory across turns. It may take actions that are hard or impossible to undo — filing a bug ticket, triggering a test suite, sending an alert. Look at this same diagram now."
+> "An agentic system does not just produce one answer. It makes decisions. It calls tools. It maintains memory across turns. It may take actions that are hard or impossible to undo - filing a bug ticket, triggering a test suite, sending an alert. Look at this same diagram now."
 
 **Slide content (diagram):**
 
 ```
 User Request
-    │
-    ▼
-  Agent ──► Decides: Which tool? With what parameters?
-    │
-    ├──► search_kb(query)              [read-only]
-    ├──► run_regression_suite(scope)   [expensive operation]
-    ├──► get_test_history(test_id)     [read-only]
-    └──► create_bug_ticket(...)        [write action, hard to undo]
-    │
-    ▼
+    |
+    v
+  Agent -> Decides: Which tool? With what parameters?
+    |
+    |- search_kb(query)              [read-only]
+    |- run_regression_suite(scope)   [expensive operation]
+    |- get_test_history(test_id)     [read-only]
+    '- create_bug_ticket(...)        [write action, hard to undo]
+    |
+    v
   Result + Updated State + Next Turn
 
 Questions we now ask:
@@ -90,7 +90,7 @@ Questions we now ask:
 
 ---
 
-## Slide 4 — The Critical Shift (1 minute)
+## Slide 4 - The Critical Shift (1 minute)
 
 **Say:**
 
@@ -108,7 +108,7 @@ Semantic similarity             Tool routing accuracy
 BLEU / cosine scores            Hallucinated parameter detection
 
 Deterministic pipeline          Multi-step, stateful behavior
-One input → one output          Sequences of decisions + actions
+One input -> one output          Sequences of decisions + actions
 
 Bad answer = user misinformed   Bad action = data corrupted,
 (recoverable)                   ticket misfiled, audit triggered
@@ -117,11 +117,11 @@ Bad answer = user misinformed   Bad action = data corrupted,
 
 ---
 
-## Slide 5 — What the Next Exercises Test (1 minute)
+## Slide 5 - What the Next Exercises Test (1 minute)
 
 **Say:**
 
-> "In Exercises 5 through 9 you will test each of these failure modes systematically. Exercise 5 is tool routing and state. Exercise 6 is multi-agent handoffs. Exercise 7 is non-functional behavior — timeouts, rate limits, weird inputs. Exercise 8 is security: prompt injection, guardrail evasion, least privilege. Exercise 9 ties it all together as a CI gate: can you automate a pass/fail decision before you deploy a new version? The skills transfer. You still write test cases. You still compare expected to actual. What changes is *what* you are comparing."
+> "In Exercises 5 through 9 you will test each of these failure modes systematically. Exercise 5 is tool routing and state. Exercise 6 is multi-agent handoffs. Exercise 7 is non-functional behavior - timeouts, rate limits, weird inputs. Exercise 8 is security: prompt injection, guardrail evasion, least privilege. Exercise 9 ties it all together as a CI gate: can you automate a pass/fail decision before you deploy a new version? The skills transfer. You still write test cases. You still compare expected to actual. What changes is *what* you are comparing."
 
 **Slide content:**
 
@@ -143,7 +143,7 @@ Exercise 9  ──  CI gate: automated deploy/no-deploy decision
 
 **If students seem anxious about the complexity shift:**
 
-> "The test case structure is almost identical — you still write inputs, expected behaviors, and observations. The vocabulary changes. 'Expected tool' replaces 'expected answer.' Take five minutes to read the opening of Exercise 5 before we start, and it will click."
+> "The test case structure is almost identical - you still write inputs, expected behaviors, and observations. The vocabulary changes. 'Expected tool' replaces 'expected answer.' Take five minutes to read the opening of Exercise 5 before we start, and it will click."
 
 **If time is short (under 5 minutes available):**
 
@@ -153,4 +153,4 @@ Skip Slides 2 and 3. Deliver Slides 1, 4, and 5 only. The table on Slide 4 is th
 
 ## Bridge to Exercise 5
 
-Hand out Exercise 5 immediately after this framing. Do not take questions until students have had 2 minutes to read the "Why This Exercise Exists" section at the top — it reinforces what you just said in their own reading pace.
+Hand out Exercise 5 immediately after this framing. Do not take questions until students have had 2 minutes to read the "Why This Exercise Exists" section at the top - it reinforces what you just said in their own reading pace.

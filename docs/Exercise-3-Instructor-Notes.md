@@ -1,10 +1,10 @@
-# Exercise 3: Audit & Extend the Evaluation Framework — Instructor Notes
+# Exercise 3: Audit & Extend the Evaluation Framework - Instructor Notes
 
 ---
 
 ## Overview
 
-Students audit the existing regression test framework to understand which metrics work and which fail. Then they propose a new evaluation rule (deterministic, semantic, or citation-based). This teaches the meta-skill of evaluating the evaluators—critical for production AI systems.
+Students audit the existing regression test framework to understand which metrics work and which fail. Then they propose a new evaluation rule (deterministic, semantic, or citation-based). This teaches the meta-skill of evaluating the evaluators - critical for production AI systems.
 
 **Key Learning Objective:** Metrics are not oracles; they're designed artifacts with trade-offs. Small changes to thresholds or rules cause dramatic shifts in pass/fail rates.
 
@@ -12,10 +12,10 @@ Students audit the existing regression test framework to understand which metric
 
 ## Setup Checklist (5 minutes before class)
 
-- [ ] Flask app running: `python launch.py` → choose option 2 (run Flask) or 3 (custom mode).
+- [ ] Flask app running: `python launch.py` -> choose option 4 (Start Flask Application).
 - [ ] Terminal ready in repo root for students to run `python -m regression_testing.regression_testing --quick`.
 - [ ] Have [regression_testing/regression_testing.py](../regression_testing/regression_testing.py) open for reference.
-- [ ] Familiarize yourself with [tests/evaluation_framework.py](../tests/evaluation_framework.py)—students may ask what metrics are being used.
+- [ ] Familiarize yourself with [tests/evaluation_framework.py](../tests/evaluation_framework.py) - students may ask what metrics are being used.
 - [ ] Optional: Pre-run the regression suite yourself to identify which tests fail and why. Note the failures.
 
 ---
@@ -26,7 +26,7 @@ Students audit the existing regression test framework to understand which metric
 |-|-|-|
 | Introduction & Key Concepts (5-7 minutes) | 5 minutes | Emphasize: "Auditing the auditors" and the three evaluation layers. |
 | Part A: Explore & Map (students work) | 20-25 minutes | Circulate; help students identify false positives/negatives. |
-| Part B: Propose Fix (students work) | 15-20 minutes | Students draft one approach. Expect variety-that is good. |
+| Part B: Propose Fix (students work) | 15-20 minutes | Students draft one approach. Expect variety - that is good. |
 | Part C: Test & Document (students work) | 10 minutes | Quick re-run and impact analysis. |
 | Debrief & Group Share (5 minutes) | 5 minutes | 2-3 students share findings. Bridge to regression testing in production. |
 | **Total** | **45-55 minutes** | - |
@@ -40,13 +40,13 @@ Students audit the existing regression test framework to understand which metric
 Running `python -m regression_testing.regression_testing --quick` should show:
 
 **Likely to PASS:**
-- `factual_simple` — straightforward query about GenAI testing, clear knowledge base answer.
-- `reasoning_multi_step` — multi-step reasoning, good citation in response.
+- `factual_simple` - straightforward query about GenAI testing, clear knowledge base answer.
+- `reasoning_multi_step` - multi-step reasoning, good citation in response.
 
 **Likely to FAIL or WARN:**
-- `hallucination_basic` — The query is "What AI safety practices..."; the chatbot may paraphrase from "GenAI Testing Guide" in a way that scores low on semantic similarity (0.62-0.70 vs. threshold 0.75). **This is a FALSE POSITIVE.**
-- `adversarial_jailbreak_attempt` — The query tries to trick the chatbot into ignoring the knowledge base. The chatbot may refuse appropriately, but the refusal text doesn't match the golden expected answer exactly. **Deterministic checks won't catch this without a refusal detector.**
-- `noise_contradictory_prompt` — Contradictory query ("best practices that are bad"). The chatbot may output something technically correct but unhelpful. **Semantic similarity won't detect "semantically correct but useless."**
+- `hallucination_basic` - The query is "What AI safety practices..."; the chatbot may paraphrase from "GenAI Testing Guide" in a way that scores low on semantic similarity (0.62-0.70 vs. threshold 0.75). **This is a FALSE POSITIVE.**
+- `adversarial_jailbreak_attempt` - The query tries to trick the chatbot into ignoring the knowledge base. The chatbot may refuse appropriately, but the refusal text doesn't match the golden expected answer exactly. **Deterministic checks won't catch this without a refusal detector.**
+- `noise_contradictory_prompt` - Contradictory query ("best practices that are bad"). The chatbot may output something technically correct but unhelpful. **Semantic similarity won't detect "semantically correct but useless."**
 
 ### Known Weaknesses to Guide Discussion
 
@@ -131,7 +131,7 @@ Running `python -m regression_testing.regression_testing --quick` should show:
 ### Part B: Proposal (0-2 points)
 
 - **0:** No proposal or approach is incoherent.
-- **1:** Proposal is clear but partial—pseudo-code sketched but not justified, or vice versa.
+- **1:** Proposal is clear but partial-pseudo-code sketched but not justified, or vice versa.
 - **2:** Proposal is clear, justified, and implementable (code or detailed pseudo-code provided).
 
 ### Part C: Testing & Impact (0-2 points)
@@ -143,8 +143,8 @@ Running `python -m regression_testing.regression_testing --quick` should show:
 **Total: 6 points (can scale to 0-10 or 0-100 as you prefer)**
 
 **Grading Ceiling Notes:**
-- A student who completes Part A & B thoroughly but runs out of time on Part C → 4/6 (solid pass).
-- A student who writes a citation rule but it's brittle (5 new false positives) → Encourage iteration, but still credit the thinking.
+- A student who completes Part A & B thoroughly but runs out of time on Part C -> 4/6 (solid pass).
+- A student who writes a citation rule but it's brittle (5 new false positives) -> Encourage iteration, but still credit the thinking.
 
 ---
 
@@ -152,11 +152,11 @@ Running `python -m regression_testing.regression_testing --quick` should show:
 
 ### Opening (Connect to Exercise 2)
 
-*"In Exercise 2, you designed golden records—the 'right answers.' Today, we flip it: **How do we automatically grade multiple answers at scale?** You'll audit the framework and propose a fix."*
+*"In Exercise 2, you designed golden records-the 'right answers.' Today, we flip it: **How do we automatically grade multiple answers at scale?** You'll audit the framework and propose a fix."*
 
-### Mid-Exercise (Part A → Part B)
+### Mid-Exercise (Part A -> Part B)
 
-*"Now that you've mapped what's failing, you have data. You've identified the gaps. Next, you propose a rule to fix one of them. You're not writing perfect code—you're designing a heuristic that's good enough for production."*
+*"Now that you've mapped what's failing, you have data. You've identified the gaps. Next, you propose a rule to fix one of them. You're not writing perfect code-you're designing a heuristic that's good enough for production."*
 
 ### Closing (to Section 4)
 
@@ -185,7 +185,7 @@ A: Embedding models are trained on general internet text, not specialized GenAI 
 A: Neither is objectively right. Lowering it catches more hallucinations (higher recall) but flags correct paraphrases (lower precision). You pick based on your risk tolerance.
 
 **Q: Can we use the same Cohere model to grade its own output?**
-A: Yes, but it's expensive (2 API calls per response). It's also biased—the model may grade itself leniently. Good for research, risky for production.
+A: Yes, but it's expensive (2 API calls per response). It's also biased-the model may grade itself leniently. Good for research, risky for production.
 
 **Q: What if my new rule is contradicted by existing tests?**
 A: Perfect! That's a conflict of interest. You've discovered that two metrics disagree. Propose a tie-breaker rule.
@@ -216,6 +216,6 @@ If a group finishes early:
 
 - [ ] Skim [regression_testing/regression_testing.py](../regression_testing/regression_testing.py) to understand the structure.
 - [ ] Run `python -m regression_testing.regression_testing --quick` yourself and note which tests fail.
-- [ ] Familiarize yourself with [tests/evaluation_framework.py](../tests/evaluation_framework.py)—it contains the metric definitions.
+- [ ] Familiarize yourself with [tests/evaluation_framework.py](../tests/evaluation_framework.py)-it contains the metric definitions.
 - [ ] If confident, prepare a 2-minute demo showing threshold adjustment (e.g., change 0.75 -> 0.70, re-run, show impact).
 - [ ] Prepare answers to the "Anticipated Questions" section above.

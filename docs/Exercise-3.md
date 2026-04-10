@@ -8,7 +8,7 @@
 
 ## Overview
 
-In Exercise 2, you designed and verified golden records—test cases with expected outputs. But how do we *automatically* grade the chatbot against those records at scale?
+In Exercise 2, you designed and verified golden records - test cases with expected outputs. But how do we *automatically* grade the chatbot against those records at scale?
 
 This exercise flips the question: **What makes a good evaluation metric?**
 
@@ -17,7 +17,7 @@ You will:
 2. **Identify gaps** where the current metrics miss real problems.
 3. **Extend** the framework with a new evaluation rule tailored to the chatbot's behavior.
 
-This moves you from testing the system (Exercises 1-2) to testing the *tests themselves* — a critical production skill.
+This moves you from testing the system (Exercises 1-2) to testing the *tests themselves* - a critical production skill.
 
 ---
 
@@ -200,7 +200,7 @@ Once you've proposed a heuristic, semantic adjustment, or citation rule:
 2. **Re-run the regression suite** with your new rule enabled.
 3. **Document the impact:**
    - How many previously failing tests now pass?
-   - How many previously passing tests now fail? (These are new false positives—investigate!)
+   - How many previously passing tests now fail? (These are new false positives-investigate!)
 4. **Propose an adjustment** if needed.
 
 ---
@@ -242,4 +242,4 @@ Submit one file named `exercise3_submission.md` (or PDF) containing:
 
 ## Key Takeaway
 
-Evaluation metrics are not oracles—they're tools you design and refine. **The best tests fail gracefully and tell you why.** By auditing your own metrics, you build the judgment needed for production AI systems where no perfect answer exists.
+Evaluation metrics are not oracles-they're tools you design and refine. **The best tests fail gracefully and tell you why.** By auditing your own metrics, you build the judgment needed for production AI systems where no perfect answer exists.

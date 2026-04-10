@@ -101,6 +101,7 @@ These provide menu-driven interfaces to:
 TestingAITutorial/
 ├── app/
 │   ├── __init__.py          # Python package initialization
+│   ├── agentic_testops.py   # Agentic backend used in Exercises 5-9
 │   ├── main.py              # Flask application and API endpoints
 │   ├── rag_pipeline.py      # RAG implementation with Cohere + ChromaDB
 │   └── utils.py             # Utility functions and helpers
@@ -110,7 +111,8 @@ TestingAITutorial/
 │   └── js/
 │       └── chat.js          # Interactive chat interface logic
 ├── templates/
-│   └── index.html           # Main chat interface template
+│   ├── index.html           # Main chat interface template
+│   └── exercise_hub.html    # In-app exercise content renderer
 ├── data/
 │   ├── documents/           # Knowledge base documents (GenAI testing content)
 │   │   ├── genai_testing_guide.md
@@ -133,6 +135,7 @@ TestingAITutorial/
 │   ├── Section-Bridge-RAG-to-Agentic.md
 ├── section7_nfr_quickrun.py # Exercise 7 automation artifact generator
 ├── section9_agentic_test_suite.py # Exercise 9 CI-style artifact generator
+├── temperature_demo.py      # Exercise 1 temperature variability demo
 ├── requirements.txt         # Python dependencies
 ├── .env.template           # Environment variable template  
 ├── run.py                  # Application entry point
@@ -145,7 +148,7 @@ TestingAITutorial/
 ### 🤖 **RAG Chatbot**
 - **Cohere Integration**: Uses Cohere's embeddings and Command model
 - **ChromaDB Vector Store**: Local, persistent document storage
-- **LangChain Framework**: Professional RAG implementation
+- **Custom Python RAG Pipeline**: Purpose-built for classroom testing exercises
 - **Source Attribution**: Shows retrieved documents and similarity scores
 - **Real-time Performance Metrics**: Response times and statistics
 
@@ -208,12 +211,12 @@ curl -X POST http://localhost:5000/api/chat \
 python tests/evaluation_framework.py
 
 # Run regression testing framework
-python regression_testing/regression_testing.py
+python -m regression_testing.regression_testing
 ```
 
 ### Running Exercise 4 Retrieval Tuning Support
 ```bash
-python -m experiments.retrieval_experiments
+python experiments/retrieval_experiments.py
 ```
 
 ### Running Exercise 7 and 9 Automation
@@ -283,7 +286,7 @@ print(f"Quality Gate: {'PASSED' if gate_passed else 'FAILED'}")
 
 **"ModuleNotFoundError: No module named 'app' or 'regression_testing'"**
 - Ensure commands are run from repository root
-- Use the launcher (`python launch.py`) or run `python regression_testing/regression_testing.py`
+- Use the launcher (`python launch.py`) or run `python -m regression_testing.regression_testing`
 
 **"KeyError: 'failed_tests' or 'avg_response_length'"**
 - These issues have been FIXED in the test framework
@@ -294,10 +297,10 @@ print(f"Quality Gate: {'PASSED' if gate_passed else 'FAILED'}")
 - Run `pip install -r requirements.txt`
 - Use `python launch.py` to run exercise workflows consistently
 
-**"tf-keras compatibility issues with Keras 3"**
-- tf-keras has been added to requirements.txt
-- Virtual environment should install tf-keras>=2.15.0 automatically  
-- This resolves Keras 3 compatibility issues in the regression testing framework
+**"sentence-transformers not available"**
+- This package is optional but recommended for semantic similarity scoring in Exercise 3
+- Install with `pip install sentence-transformers` (or `pip install -r requirements.txt`)
+- If unavailable, the regression framework still runs with reduced semantic checks
 
 **"COHERE_API_KEY not found"**
 - Copy `.env.template` to `.env`

@@ -1,4 +1,4 @@
-﻿# Exercise 4: Decompose a RAG Failure - Retriever vs. Generator Diagnosis - Instructor Notes
+# Exercise 4: Decompose a RAG Failure - Retriever vs. Generator Diagnosis - Instructor Notes
 
 ---
 
@@ -12,7 +12,7 @@ Students diagnose why the chatbot failed on specific queries by tracing the full
 
 ## Setup Checklist (5 minutes before class)
 
-- [ ] Flask app running: `python launch.py` -> choose option 2 (run Flask).
+- [ ] Flask app running: `python launch.py` -> choose option 4 (Start Flask Application).
 - [ ] Verify chatbot is accessible at [http://localhost:5000](http://localhost:5000).
 - [ ] Have students' Exercise 2 golden records available (or ask them to reference their own work).
 - [ ] Familiarize yourself with [app/rag_pipeline.py](../app/rag_pipeline.py), especially:
@@ -212,7 +212,7 @@ From [app/rag_pipeline.py](../app/rag_pipeline.py), there are documented intenti
 
 ### Closing (to Section Bridge)
 
-*"You just debugged 3-4 queries manually. But in production, you have 1,000 queries a day. You can't inspect each one by hand. Before we go further — the system we've been testing is about to get more complex. Take a few minutes for the section bridge and then we'll start Exercise 5."*
+*"You just debugged 3-4 queries manually. But in production, you have 1,000 queries a day. You can't inspect each one by hand. Before we go further - the system we've been testing is about to get more complex. Take a few minutes for the section bridge and then we'll start Exercise 5."*
 
 **After the Exercise 4 debrief, deliver the 5-10 minute section framing talk before handing out Exercise 5.**  
 See: [Section-Bridge-RAG-to-Agentic.md](Section-Bridge-RAG-to-Agentic.md)

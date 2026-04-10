@@ -30,7 +30,7 @@ Automated regression testing is only as trustworthy as the golden records it run
 ### Scenario
 You are a QA engineer responsible for the GenAI Testing Chatbot you explored in Exercise 1. A new version of the Cohere backend model is being evaluated and you need a golden test set to decide whether the swap is safe to ship.
 
-The chatbot's knowledge base covers four topics: GenAI testing strategies, FAQs about testing challenges, production best practices, and evaluation metrics. Your golden records must be answerable from those documents — if the chatbot cannot know the answer from its knowledge base, neither can your gold standard.
+The chatbot's knowledge base covers four topics: GenAI testing strategies, FAQs about testing challenges, production best practices, and evaluation metrics. Your golden records must be answerable from those documents - if the chatbot cannot know the answer from its knowledge base, neither can your gold standard.
 
 ### Task
 Design exactly 10 golden records using the distribution below.
@@ -65,13 +65,13 @@ priority: high
 ```
 
 ### Tip: verify against the knowledge base first
-Before finalising a gold standard, ask the chatbot the question and compare the response to the source documents. If the chatbot consistently cannot answer it correctly, that is a system limitation — not a useful golden record.
+Before finalising a gold standard, ask the chatbot the question and compare the response to the source documents. If the chatbot consistently cannot answer it correctly, that is a system limitation - not a useful golden record.
 
 ### Things to think about while designing
 1. Is your gold standard actually answerable from the four knowledge base documents?
 2. Are your keywords specific enough to rule out a hallucinated but fluent response?
 3. Does your length range exclude both stub answers and over-verbose padding?
-4. For adversarial cases: what is the correct behavior — refusal, redirection, or partial answer?
+4. For adversarial cases: what is the correct behavior - refusal, redirection, or partial answer?
 5. For noise cases: should the system respond helpfully, ask for clarification, or return an error?
 6. Would this record still be valid if the backend model was swapped for a different LLM?
 
@@ -117,7 +117,7 @@ Good Copilot uses:
 Avoid:
 1. Having Copilot write gold standards without verifying them against the knowledge base documents.
 2. Accepting keyword lists without checking that they discriminate good responses from fluent hallucinations.
-3. Using Copilot to critique the existing records — that analysis must come from you.
+3. Using Copilot to critique the existing records - that analysis must come from you.
 
 ---
 

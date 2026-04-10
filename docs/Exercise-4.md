@@ -1,4 +1,4 @@
-# Exercise 4: Decompose a RAG Failure — Retriever vs. Generator Diagnosis
+# Exercise 4: Decompose a RAG Failure - Retriever vs. Generator Diagnosis
 
 **Estimated Duration:** 50-60 minutes  
 **Prerequisites:** Completion of Exercise 2 (at least 3 golden records with real outputs)  
@@ -8,14 +8,14 @@
 
 ## Overview
 
-A chatbot's answer is only as good as the documents it retrieves. If the retriever pulls the wrong chunk, the generator—no matter how powerful—will hallucinate, summarize incorrectly, or refuse to answer.
+A chatbot's answer is only as good as the documents it retrieves. If the retriever pulls the wrong chunk, the generator - no matter how powerful - will hallucinate, summarize incorrectly, or refuse to answer.
 
 This exercise teaches you to **decompose failures** along the RAG pipeline:
 
 1. **Retriever Failure:** Wrong document retrieved, or right document ranked too low.
 2. **Generator Failure:** Retrieved documents were good, but the LLM misused or ignored them.
 
-By instrumenting the chatbot, you'll learn to fix problems at their source—not downstream.
+By instrumenting the chatbot, you'll learn to fix problems at their source - not downstream.
 
 ---
 
@@ -30,7 +30,7 @@ Query Embedding
     ↓
 Similarity Search (Retriever) ← Failure here = wrong context
     ↓
-Top K Documents → Injected into prompt
+Top K Documents -> Injected into prompt
     ↓
 LLM Generation (Generator) ← Failure here = wrong use of context
     ↓
@@ -103,10 +103,10 @@ For each "N" grade, propose why the retriever failed:
 Query: "What evaluation metrics matter?"
   Status: Off Target (wrong doc ranked first)
   Root Cause Hypothesis:
-    [ ] Embedding mismatch – Query about "evaluation" found "safety"
-    [ ] Chunk size issue – Key content split across chunks; top chunk lacks context
-    [ ] Vocabulary gap – Query uses "metrics" but docs use "dimensions" or "measurements"
-    [ ] Too many results retrieved – Not filtering by relevance threshold
+    [ ] Embedding mismatch - Query about "evaluation" found "safety"
+    [ ] Chunk size issue - Key content split across chunks; top chunk lacks context
+    [ ] Vocabulary gap - Query uses "metrics" but docs use "dimensions" or "measurements"
+    [ ] Too many results retrieved - Not filtering by relevance threshold
 ```
 
 ---
@@ -142,12 +142,12 @@ If the generator underperformed, choose the likely culprit:
 Query: "What evaluation metrics matter?"
   Retrieved Sources: genai_testing_guide.md, evaluation_metrics.md (good!)
   Response Quality Assessment:
-    ❌ Did NOT stick to context – included claims about "bias metrics" not in docs
+    ❌ Did NOT stick to context - included claims about "bias metrics" not in docs
     Likely Generator Failure Cause:
       [ ] Prompt not strict enough ("answer only from context" unclear)
-      [ ] Context window cut off – docs were truncated before reaching the LLM
-      [ ] Position bias – Relevant info was in the middle of context; LLM ignored it
-      [ ] Hallucination from pre-training – Model filled gaps with training knowledge
+      [ ] Context window cut off - docs were truncated before reaching the LLM
+      [ ] Position bias - Relevant info was in the middle of context; LLM ignored it
+      [ ] Hallucination from pre-training - Model filled gaps with training knowledge
 ```
 
 ---
@@ -270,7 +270,7 @@ Submit one file named `exercise4_submission.md` (or PDF) containing:
 
 1. **Dependency Insight:** Of your 3-4 failures, how many were retriever-only vs. generator-only vs. both? What does this suggest about where to invest effort?
 
-2. **Threshold Sensitivity:** A small similarity threshold change (e.g., 0.75 → 0.60) can dramatically shift which documents get retrieved. How would you tune this without overfitting to your 4 test cases?
+2. **Threshold Sensitivity:** A small similarity threshold change (e.g., 0.75 -> 0.60) can dramatically shift which documents get retrieved. How would you tune this without overfitting to your 4 test cases?
 
 3. **Position Bias:** If the most relevant document is ranked 4th instead of 1st, will the LLM use it? Why or why not? (Hint: Think about context window limits.)
 
@@ -283,9 +283,9 @@ Submit one file named `exercise4_submission.md` (or PDF) containing:
 ## Resources
 
 - **Running Chatbot:** [http://localhost:5000](http://localhost:5000)
-- **RAG Pipeline Code:** [app/rag_pipeline.py](../app/rag_pipeline.py) — Inspect the `_retrieve_documents()` and `_generate_response()` methods
-- **Retrieval Experiments:** [experiments/retrieval_experiments.py](../experiments/retrieval_experiments.py) — Reference for tuning retrieval parameters
-- **Knowledge Base:** [data/documents/](../data/documents/) — The source of truth your retriever should find
+- **RAG Pipeline Code:** [app/rag_pipeline.py](../app/rag_pipeline.py) - Inspect the `_retrieve_documents()` and `_generate_response()` methods
+- **Retrieval Experiments:** [experiments/retrieval_experiments.py](../experiments/retrieval_experiments.py) - Reference for tuning retrieval parameters
+- **Knowledge Base:** [data/documents/](../data/documents/) - The source of truth your retriever should find
 - **Vector Database Stats:** Run `python -c "from app.rag_pipeline import RAGPipeline; p = RAGPipeline(); print(f'Total docs: {p.collection.count()}')"` to see database stats
 
 ---
@@ -294,4 +294,4 @@ Submit one file named `exercise4_submission.md` (or PDF) containing:
 
 **The best RAG debugging skill is tracing the dependency chain:** If the retriever pulls garbage, the generator is fighting an uphill battle. Conversely, a perfect retriever with a weak generator wastes resources. Know which system is failing, fix it at source, and validate your fix with a before/after comparison.
 
-In Exercise 5, you'll learn to automate this decomposition for production monitoring—so you catch failures as they happen, not after users complain.
+In Exercise 5, you'll learn to automate this decomposition for production monitoring-so you catch failures as they happen, not after users complain.
