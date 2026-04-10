@@ -19,10 +19,17 @@
 		"cpus": 4,
 		"memory": "16GB",
 		"storage": "32GB"
-	}
+	},
 
 	// Configure tool-specific properties.
-	// "customizations": {},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.copilot",
+				"github.copilot-chat"
+			]
+		}
+	}
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
